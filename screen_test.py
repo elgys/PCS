@@ -52,20 +52,30 @@ class BouncyBalls(object):
         The main loop of the game.
         :return: None
         """
-        pushed = 0
         # Main loop
+
+        pushed = 0
+        print(self._m.add_force_on_wheel((1, 0), 5800, (0, -30)))
+        print(self._m.forces[0])
+
         while self._running:
             # Progress time forward
             if pushed >= 0:
                 pushed += 1
             if pushed >= 20:
-                self._space.bodies[0].apply_impulse_at_local_point(
-                    (5400, 0), (0, -105))
-                if pushed >= 20:
-                    pushed = -1
+                # print(self._m.entity_addresses['rhonrad'].center_of_gravity)
+                # print(self._m.entity_addresses['rhonrad'].angle % 6.282)
+                # self._m.entity_addresses['rhonrad'].apply_force_at_local_point(
+                #     (0, -5400), (105, 0))
+                pass
+            if pushed >= 200:
+                # self._m.entity_addresses['rhonrad'].angle = 3.14159
+                # self._m.set_human_center_of_mass((40, -80), 55)
+                pushed = -1
 
             for x in range(self._physics_steps_per_frame):
-                self._space.step(self._dt)
+                # self._space.step(self._dt)
+                self._m.step()
 
             self._process_events()
             # self._update_balls()
