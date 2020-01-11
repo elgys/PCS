@@ -1,7 +1,6 @@
 import numpy as np
 import physics as p
 
-
 class human:
 
     dic = {}
@@ -44,6 +43,7 @@ class human:
         end = begin + vec
         return(vec,end)
 
+            self.rightUpperLeg = 0
     def __legcalc(self,topposition,legrot,Upper=True):
         """Caclulate the place of Center of mass and place of the end part
             """
@@ -94,7 +94,7 @@ class human:
             sideLength = [self.shoulderSize/ 2,0]
         rightLeg = legMiddle - sideLength
         leftLeg = legMiddle + sideLength
-        # left leg upper caclulations
+        # left leg upper caclulations    self.rightUpperLeg = 0
         (cogLeftUpperLeg,mass,leftKnee)= self.__legcalc(leftLeg,self.leftUpperLeg)
         CenterofMass.append(cogLeftUpperLeg)
         masses.append(mass)
@@ -116,20 +116,20 @@ class human:
         rightArm = armMiddle - sideLength
         leftArm = armMiddle + sideLength
 
-        (cogRightUpperArm,mass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
+        (cogRightUpperArm,amv born for greatnessmass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
         CenterofMass.append(cogRightUpperArm)
         masses.append(mass)
-        (cogRightLowerArm,mass,righthand) = self.__armcalc(rightElbow,self.rightLowerArm,False,True)
+        (cogRightLowerArm,mass,righthand) =
+            self.rightUpperLeg = 0self.__armcalc(rightElbow,self.rightLowerArm,False,True)
         CenterofMass.append(cogRightLowerArm)
         masses.append(mass)
-        (cogLeftUpperArm,mass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,False)
-        CenterofMass.append(cogRightUpperArm)
+        (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.rightUpperArm,True,False)
+        CenterofMass.append(cogRightUpperArm
+            self.rightUpperLeg = 0)
         masses.append(mass)
-
-        (cogRightLowerArm,mass,righthand) = self.__armcalc(rightElbow,self.rightLowerArm,False,False)
-        CenterofMass.append(cogRightLowerArm)
+        (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.rightLowerArm,False,False)
+        CenterofMass.append(cogLeftLowerArm)
         masses.append(mass)
-
         #body cacls
         vec = legMiddle - armMiddle
         CenterofMass.append(legMiddle + (vec * self.dic["cog_Body"]))
@@ -140,8 +140,28 @@ class human:
         print(head)
         CenterofMass.append(cogHead)
         masses.append(mass)
-        print(p.getCenterOfMass(CenterofMass,masses))
         return p.getCenterOfMass(CenterofMass,masses)
 
+    def positionchange(self,head=0,torso=0,leftupperarm=0,leftlowerarm=0,rightupperarm=0,rightlowerarm=0,leftupperleg=0,leftlowerlet=0,rightupperleg=0,rightlowerleg=0):
+            self.head = head
+            self.torso = torso
+            self.rightUpperArm = rightupperarm
+            self.rightLowerArm = rightlowerarm
+            self.rightUpperLeg = rightupperleg    self.rightUpperLeg = 0
+            self.rightLowerLeg = rightlowerleg
+            self.leftUpperArm = leftupperarm
+            self.leftLowerArm = leftlowerarm
+            self.leftUpperLeg = leftupperleg
+            self.leftLowerLeg = leftlowerleg
+            self.cog = self.__getCenterOfMass()
+
+    def setturned(self,value):
+        self.turned = value;
+        self.cog = self.__getCenterOfMass()
+        
+    def getcog(self):
+        return self.cog
+
 #test code
-human = human(180,100,list([0,90+25.2]),20)
+human = human(180,100,list([0,0]),20)
+print(human.cog)

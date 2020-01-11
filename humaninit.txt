@@ -1,9 +1,9 @@
-length_Head 0.1075
+length_Head 0.23
 length_Body 0.295
 length_Upper_Arm 0.1725
 length_Lower_Arm 0.2160
 length_Upper_Leg 0.2405
-length_Lower_Leg 0.252
+length_Lower_Leg 0.291
 weight_Head 0.0823
 weight_Body 0.4592
 weight_Upper_Arm 0.03075
