@@ -43,7 +43,6 @@ class human:
         end = begin + vec
         return(vec,end)
 
-            self.rightUpperLeg = 0
     def __legcalc(self,topposition,legrot,Upper=True):
         """Caclulate the place of Center of mass and place of the end part
             """
@@ -88,6 +87,7 @@ class human:
         # here first we caclulate the place of the legs and there center of mass
         # and put them into
         legMiddle = self.bodyposition - (np.array([0,self.length * self.dic["length_Body"] /2]))
+        (vec,legMiddle)= self.__rotationBodyParts(self.bodyposition,legMiddle,self.torso)
         if self.turned:
             sideLength = [0,0]
         else:
@@ -112,56 +112,71 @@ class human:
         masses.append(mass)
         # now let's caclulate the arms
         armMiddle = self.bodyposition + (np.array([0,self.length * self.dic["length_Body"] / 2]))
+        print(armMiddle)
+        (vec,armMiddle) = self.__rotationBodyParts(self.bodyposition,armMiddle,self.torso)
+
 
         rightArm = armMiddle - sideLength
         leftArm = armMiddle + sideLength
 
-        (cogRightUpperArm,amv born for greatnessmass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
+        (cogRightUpperArm,mass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
         CenterofMass.append(cogRightUpperArm)
         masses.append(mass)
-        (cogRightLowerArm,mass,righthand) =
-            self.rightUpperLeg = 0self.__armcalc(rightElbow,self.rightLowerArm,False,True)
+        (cogRightLowerArm,mass,righthand) = self.__armcalc(rightElbow,self.rightLowerArm,False,True)
         CenterofMass.append(cogRightLowerArm)
         masses.append(mass)
         (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.rightUpperArm,True,False)
-        CenterofMass.append(cogRightUpperArm
-            self.rightUpperLeg = 0)
+        CenterofMass.append(cogLeftUpperArm)
         masses.append(mass)
         (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.rightLowerArm,False,False)
         CenterofMass.append(cogLeftLowerArm)
         masses.append(mass)
         #body cacls
         vec = legMiddle - armMiddle
+        print(legMiddle)
+        print(armMiddle)
         CenterofMass.append(legMiddle + (vec * self.dic["cog_Body"]))
         masses.append(self.weight * self.dic["weight_Body"])
 
         # head caclc
         (cogHead,mass,head) = self.__headcalc(armMiddle,self.head)
-        print(head)
         CenterofMass.append(cogHead)
         masses.append(mass)
         return p.getCenterOfMass(CenterofMass,masses)
 
-    def positionchange(self,head=0,torso=0,leftupperarm=0,leftlowerarm=0,rightupperarm=0,rightlowerarm=0,leftupperleg=0,leftlowerlet=0,rightupperleg=0,rightlowerleg=0):
-            self.head = head
-            self.torso = torso
-            self.rightUpperArm = rightupperarm
-            self.rightLowerArm = rightlowerarm
-            self.rightUpperLeg = rightupperleg    self.rightUpperLeg = 0
-            self.rightLowerLeg = rightlowerleg
-            self.leftUpperArm = leftupperarm
-            self.leftLowerArm = leftlowerarm
-            self.leftUpperLeg = leftupperleg
-            self.leftLowerLeg = leftlowerleg
-            self.cog = self.__getCenterOfMass()
+    def positionchange(self,head=0,torso=0,leftupperarm=0,leftlowerarm=0,rightupperarm=0,rightlowerarm=0,leftupperleg=0,leftlowerleg=0,rightupperleg=0,rightlowerleg=0):
+        self.head = head * (2*np.pi/360)
+        self.torso = torso * (2*np.pi/360)
+        self.rightUpperArm = rightupperarm * (2*np.pi/360)
+        self.rightLowerArm = rightlowerarm * (2*np.pi/360)
+        self.rightUpperLeg = rightupperleg * (2*np.pi/360)
+        self.rightLowerLeg = rightlowerleg * (2*np.pi/360)
+        self.leftUpperArm = leftupperarm * (2*np.pi/360)
+        self.leftLowerArm = leftlowerarm * (2*np.pi/360)
+        self.leftUpperLeg = leftupperleg * (2*np.pi/360)
+        self.leftLowerLeg = leftlowerleg * (2*np.pi/360)
+        self.cog = self.__getCenterOfMass()
 
     def setturned(self,value):
         self.turned = value;
         self.cog = self.__getCenterOfMass()
-        
+
     def getcog(self):
         return self.cog
 
+    def rightfoodtomiddel(self,rightpos):
+        rightKnee =rightpos +  self.length * np.array([0,self.length * self.dic['length_Lower_Leg']])
+        (_,rightKnee) = self.__rotationBodyParts(rightpos,rightKnee,np.pi + self.rightLowerLeg)
+        rightHip = rightKnee + self,lenght * np.array([0,self.length * self.dic['length_Upper_Leg']])
+        (_,rightHip) = self.__rotationBodyParts(rightKnee,rightHip,np.pi + self.rightUpperLeg)
+        middle = rightHip + np.array([self.shoulderSize/2,0 ])
+        (_,middle) = self.__rotationBodyParts(rightHip,middle,np.pi + self.torso)
+        bodymiddle = middle + np.array([0,self.dic['length_Body'] / 2])
+        (_,bodymiddle) = self.__rotationBodyParts(middle,bodymiddle,np.pi + self.torso)
+        self.bodyposition = bodymiddle
+
+
 #test code
 human = human(180,100,list([0,0]),20)
+human.positionchange(torso=20)
 print(human.cog)
