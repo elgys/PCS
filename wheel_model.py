@@ -30,25 +30,28 @@ FLOOR_WIDTH = 2 * np.pi * WHEEL_RADIUS * 4.2
 
 COULOMB_FRICTION_CONSTANT = 0.7  # The friction coefficient for PVC on wood
 
-DT = 0.01  # seconds, time difference between frames
+DT = 0.01  # seconds, time difference between simulation steps
 
 WHEEL_MIDDLE = Vec2d(300, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
-class Model:
+class Wheel_model:
     def __init__(self):
         self.space = pymunk.Space()
         self.space.gravity = (0.0, GRAVITY_CONSTANT)  # Generic gravity
         self.space.damping = 0.99          # Generic resistance
         self.entities = []
         self.entity_addresses = {}
+
         self.__setup_rhonrad()
         self.__setup_floor()
         self.space.add(self.entities)
+
         self.current_time = 0.0  # seconds
         self.forces = []  # [[force vector, location vector, end_time]]
         self.angle_actions = []  # [[angle, f, *args]]
         self.run_simulation = True
+        self.success = False
 
     def __setup_floor(self):
         """Setup the static floor beneath the rhonrad."""
@@ -126,7 +129,7 @@ class Model:
             point.mass = mass_per
             entities.append(point)
             if name:
-                self.entity_addresses[name + '_' + str(i)] = point
+                self.entity_addresses[name + '_' + str(2 - i)] = point
 
         self.entities += entities
 
@@ -159,6 +162,11 @@ class Model:
         self.forces.append(force)
         return force
 
+    def add_force_on_wheel_named(self, name, force_strength):
+        """Adds a force at the postion of a named entity"""
+        location = self.entity_addresses[name].offset
+        return self.add_force_on_wheel(location, force_strength, location)
+
     def remove_force_on_wheel(self, force):
         """Remove the force added by add_force_on_wheel from the wheel.
         force argument is expected to be the force vector from the add_force_on_wheel
@@ -170,6 +178,18 @@ class Model:
         """Add a angle action to the model which triggers function f with
         arguments *args when the wheel has turned angle radians"""
         self.angle_actions.append([angle, f, *args])
+
+    def failure(self):
+        """Helper function to indicate that the simulation was a failure, and
+        to stop the simulation"""
+        self.success = False
+        self.run_simulation = False
+
+    def success(self):
+        """Helper function to indicate that the simulation was a success, and
+        to stop the simulation"""
+        self.success = True
+        self.run_simulation = False
 
     def __apply_angle_actions(self):
         """Apply function f with arguments args when the wheel has turned angle
@@ -199,7 +219,7 @@ class Model:
         while self.run_simulation:
             self.step()
             self.current_time += DT
-            # print(self.entity_addresses['rhonrad'].angle)
+        return self.success
 
     def step(self):
         """Take a step in the simulation; also apply all angle actions

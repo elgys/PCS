@@ -9,7 +9,7 @@ from pygame.color import *
 # pymunk imports
 import pymunk
 import pymunk.pygame_util
-import model
+import wheel_model
 
 
 class BouncyBalls(object):
@@ -20,7 +20,7 @@ class BouncyBalls(object):
 
     def __init__(self):
         # Space
-        self._m = model.Model()
+        self._m = wheel_model.Wheel_model()
         self._space = self._m.space
         # self._space.gravity = (0.0, -900.0)
 
