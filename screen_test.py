@@ -1,4 +1,5 @@
 import random
+import human_model
 
 # Library imports
 import pygame
@@ -21,6 +22,15 @@ class BouncyBalls(object):
     def __init__(self):
         # Space
         self._m = wheel_model.Wheel_model()
+        human = human_model.human(180,100,list([0,0]),20)
+        right_foot_location = self._m.get_named_location("plank_1")
+        human.test_bodypositions()
+        human.setturned(True)
+        human.positionchange(0,17,35,43,35,43,275,275,347,347)
+        human.test_bodypositions()
+        self._m.add_force_on_wheel_named( "lower_spoke_1",56000)
+        self._m.add_force_on_wheel_named("upper_grip_2", -56000)
+        self._m.set_human_center_of_mass(human.getcog(),mass=100)
         self._space = self._m.space
         # self._space.gravity = (0.0, -900.0)
 
@@ -55,8 +65,8 @@ class BouncyBalls(object):
         # Main loop
 
         pushed = 0
-        print(self._m.add_force_on_wheel((1, 0), 5800, (0, -30)))
-        print(self._m.forces[0])
+        # print(self._m.add_force_on_wheel((1, 0), 5800, (0, -30)))
+        # print(self._m.forces[0])
 
         while self._running:
             # Progress time forward

@@ -1,4 +1,5 @@
 import wheel_model
+import human_model
 
 
 class Exercise_simulator:
@@ -22,7 +23,10 @@ class Exercise_simulator:
             getattr(model, function)
 
     def run_simulation(self):
-        model = wheel_model.Wheel_model()
+        w_model = wheel_model.Wheel_model()
+        h_model = human(180,100,list([0,0]),20)
+        w_model.set_human_center_of_mass(h_model.getcog())
+        w_model.run_simulation()
 
 
 if __name__ == "__main__":

@@ -147,6 +147,9 @@ class Wheel_model:
         if mass != -1:
             human.mass = mass
 
+    def get_named_location(self,name):
+        return self.entity_addresses[name].offset
+
     def add_force_on_wheel(self, force_vector_direction, force_strength,
                            location, time=-1):
         """Adds a force to the wheel in the given direction with the given strength
