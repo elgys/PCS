@@ -1,4 +1,4 @@
-import numpy as np
+gimport numpy as np
 import physics as p
 
 class human:
