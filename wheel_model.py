@@ -148,6 +148,7 @@ class Wheel_model:
             human.mass = mass
 
     def get_named_location(self,name):
+        """Get the location of the entity relative to the middle of the wheel"""
         return self.entity_addresses[name].offset
 
     def add_force_on_wheel(self, force_vector_direction, force_strength,
@@ -182,13 +183,13 @@ class Wheel_model:
         arguments *args when the wheel has turned angle radians"""
         self.angle_actions.append([angle, f, *args])
 
-    def failure(self):
+    def run_failure(self):
         """Helper function to indicate that the simulation was a failure, and
         to stop the simulation"""
         self.success = False
         self.run_simulation = False
 
-    def success(self):
+    def run_success(self):
         """Helper function to indicate that the simulation was a success, and
         to stop the simulation"""
         self.success = True
@@ -200,7 +201,8 @@ class Wheel_model:
         to_remove = []
         for angle_action in self.angle_actions:
             angle, f, *args = angle_action
-            if self.entity_addresses['rhonrad'].angle < angle:
+            if abs(self.entity_addresses['rhonrad'].angle) > angle:
+                print(f, args, self.entity_addresses['rhonrad'].angle)
                 f(*args)
                 to_remove.append(angle_action)
         for angle_action in to_remove:
@@ -222,6 +224,8 @@ class Wheel_model:
         while self.run_simulation:
             self.step()
             self.current_time += DT
+            if self.current_time > 600.0:
+                self.run_failure()
         return self.success
 
     def step(self):
