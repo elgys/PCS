@@ -5,14 +5,6 @@ class human:
 
     dic = {}
     def  __init__(self,length,weight,bodyposition,shouldersize):
-        """ Initialize the human class.
-            Set all rotation degrees of all limbs to zero.
-            Set the length in centimeter and the weight in kilograms.
-            Set the center of the body and shouldersize.
-            Set turned.
-            Create a dictonary with percentages of all limbs relative to total
-            body mass.
-            Calculate the center of mass of the whole body."""
         # here the values are given in degrees.
         self.head = 0
         self.torso = 0
@@ -38,6 +30,7 @@ class human:
         if "done" not in self.dic.keys():
             self.dic["done"] = 1
             f = open("humaninit.txt",'r')
+
             for line in f:
                 (key,value) = line.split()
                 self.dic[key] = float(value)
