@@ -140,7 +140,6 @@ class human:
 
         # Calculate the placement of the arms and their combined center of mass.
         armMiddle = self.bodyposition + (np.array([0,self.length * self.dic["length_Body"] / 2]))
-        print(armMiddle)
         (vec,armMiddle) = self.__rotationBodyParts(self.bodyposition,armMiddle,self.torso)
         rightArm = armMiddle - sideLength
         leftArm = armMiddle + sideLength
@@ -167,8 +166,6 @@ class human:
 
         # body calculations
         vec = legMiddle - armMiddle
-        print(legMiddle)
-        print(armMiddle)
         CenterofMass.append(legMiddle + (vec * self.dic["cog_Body"]))
         masses.append(self.weight * self.dic["weight_Body"])
 

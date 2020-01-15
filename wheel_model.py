@@ -48,6 +48,7 @@ class Wheel_model:
         self.space.add(self.entities)
 
         self.current_time = 0.0  # seconds
+        self.max_angle = 0.0
         self.forces = []  # [[force vector, location vector, end_time]]
         self.angle_actions = []  # [[angle, f, *args]]
         self.run_simulation = True
@@ -202,7 +203,6 @@ class Wheel_model:
         for angle_action in self.angle_actions:
             angle, f, *args = angle_action
             if abs(self.entity_addresses['rhonrad'].angle) > angle:
-                print(f, args, self.entity_addresses['rhonrad'].angle)
                 f(*args)
                 to_remove.append(angle_action)
         for angle_action in to_remove:
@@ -219,14 +219,17 @@ class Wheel_model:
         for force in to_remove:
             self.remove_force_on_wheel(force)
 
-    def run(self):
-        """Run the simulation (without visuals)"""
+    def run(self, max_run_time=60.0):
+        """Run the simulation (without visuals); max_run_time is in the simulation,
+        ergo the default is simulate 60 seconds in simulation"""
         while self.run_simulation:
             self.step()
             self.current_time += DT
-            if self.current_time > 600.0:
+            if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
+                self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
+            if self.current_time > max_run_time:
                 self.run_failure()
-        return self.success
+        return self.success, self.max_angle
 
     def step(self):
         """Take a step in the simulation; also apply all angle actions
@@ -241,6 +244,5 @@ class Wheel_model:
 if __name__ == "__main__":
     model = Model()
     force = model.add_force_on_wheel((1, 0), 5800, (0, -30))
-    # print(force)
     model.add_angle_action(np.pi/2, model.remove_force_on_wheel, force)
     model.run()
