@@ -9,6 +9,9 @@ def name_to_function(name, w_model, h_model):
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)), w_model.set_human_center_of_mass(h_model.getcog()))
     elif name == 'power':
         return lambda *args: (w_model.add_force_on_wheel_named(args[0], float(args[1])))
+    elif name == 'remove_all_forces':
+        return w_model.remove_all_forces
+
 
 class Exercise_simulator:
     def __init__(self, filename, auto_parse=True):

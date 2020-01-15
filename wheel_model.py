@@ -178,6 +178,10 @@ class Wheel_model:
         force_vector, location, end_time = force
         self.forces.remove(force)
 
+    def remove_all_forces(self):
+        """Removes all forces currently working on the wheel."""
+        self.forces = []
+
     def add_angle_action(self, angle, f, *args):
         """Add a angle action to the model which triggers function f with
         arguments *args when the wheel has turned angle radians"""
@@ -202,7 +206,6 @@ class Wheel_model:
         for angle_action in self.angle_actions:
             angle, f, *args = angle_action
             if abs(self.entity_addresses['rhonrad'].angle) > angle:
-                print(f, args, self.entity_addresses['rhonrad'].angle)
                 f(*args)
                 to_remove.append(angle_action)
         for angle_action in to_remove:
