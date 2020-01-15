@@ -103,7 +103,9 @@ class human:
 
     def __getCenterOfMass(self):
         """ Calculate the center of mass of the total body.
-            Returns ([individual center of masses], [individual weights])."""
+            Returns ([individual center of masses], [individual weights]).
+            we also caclulate the location of the other parts and put them in
+            ourself."""
         CenterofMass=[]
         masses = []
         # Calculate the placement of the legs and their combined center of mass.
@@ -118,7 +120,7 @@ class human:
         rightLeg = legMiddle - sideLength
         leftLeg = legMiddle + sideLength
         self.locationRightHip = rightLeg
-        self.locationLeftHip =leftLeg
+        self.locationLeftHip = leftLeg
         # left upper leg caclulations
         (cogLeftUpperLeg,mass,leftKnee)= self.__legcalc(leftLeg,self.leftUpperLeg)
         self.locationLeftKnee = leftKnee
@@ -142,10 +144,13 @@ class human:
 
         # Calculate the placement of the arms and their combined center of mass.
         armMiddle = self.bodyposition + (np.array([0,self.length * self.dic["length_Body"] / 2]))
-        print(armMiddle)
+
         (vec,armMiddle) = self.__rotationBodyParts(self.bodyposition,armMiddle,self.torso)
         rightArm = armMiddle - sideLength
         leftArm = armMiddle + sideLength
+        self.locationRightShoulder = rightArm
+        self.locationLeftShoulder = leftArm
+
         # right upper arm calculations
         (cogRightUpperArm,mass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
         self.locationRightElbow = rightElbow
@@ -222,6 +227,10 @@ class human:
 
     def test_bodypositions(self):
         """ Get the bodypart locations."""
-        array = [self.locationHead,self.locationLeftElbow,self.locationLeftHand,self.locationRightElbow,self.locationRightHand,self.locationLeftKnee,self.locationLeftFoot,self.locationRightKnee,self.locationRightFoot]
+        array = [self.locationHead,self.locationLeftShoulder,self.locationLeftElbow,
+                 self.locationLeftHand,self.locationRightShoulder,self.locationRightElbow,
+                 self.locationRightHand,self.locationLeftHip,self.locationLeftKnee,
+                 self.locationLeftFoot,self.locationRightHip,self.locationRightKnee,
+                 self.locationRightFoot]
 
         return array
