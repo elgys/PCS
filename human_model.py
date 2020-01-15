@@ -117,6 +117,8 @@ class human:
 
         rightLeg = legMiddle - sideLength
         leftLeg = legMiddle + sideLength
+        self.locationRightHip = rightLeg
+        self.locationLeftHip =leftLeg
         # left upper leg caclulations
         (cogLeftUpperLeg,mass,leftKnee)= self.__legcalc(leftLeg,self.leftUpperLeg)
         self.locationLeftKnee = leftKnee
