@@ -154,12 +154,12 @@ class human:
         CenterofMass.append(cogRightLowerArm)
         masses.append(mass)
         # left upper arm calculations
-        (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.rightUpperArm,True,False)
+        (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.leftUpperArm,True,False)
         self.locationLeftElbow = leftElbow
         CenterofMass.append(cogLeftUpperArm)
         masses.append(mass)
         # left lower arm calculations
-        (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.rightLowerArm,False,False)
+        (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.leftLowerArm,False,False)
         self.locationLeftHand = lefthand
         CenterofMass.append(cogLeftLowerArm)
         masses.append(mass)
@@ -190,7 +190,8 @@ class human:
         self.leftLowerArm = leftlowerarm * (2*np.pi/360)
         self.leftUpperLeg = leftupperleg * (2*np.pi/360)
         self.leftLowerLeg = leftlowerleg * (2*np.pi/360)
-        self.cog = self.__getCenterOfMass()
+        self.__getCenterOfMass()
+
 
     def setturned(self,value):
         """ Change the viewing direction of the gymnast and calculate its
@@ -204,18 +205,16 @@ class human:
         """ Get the center of mass."""
         return self.cog
 
+    def getweigth(self):
+        """ get the mass of the human."""
+        return self.weight
+
     def rightFootOnMiddel(self,rightpos):
         """ Calculte from the position of the right foot the center of the
             body."""
-        rightKnee =rightpos + np.array([0,self.length * self.dic['length_Lower_Leg']])
-        (_,rightKnee) = self.__rotationBodyParts(rightpos,rightKnee,np.pi + self.rightLowerLeg)
-        rightHip = rightKnee + np.array([0,self.length * self.dic['length_Upper_Leg']])
-        (_,rightHip) = self.__rotationBodyParts(rightKnee,rightHip,np.pi + self.rightUpperLeg)
-        middle = rightHip + np.array([self.shoulderSize/2,0 ])
-        (_,middle) = self.__rotationBodyParts(rightHip,middle,np.pi + self.torso)
-        bodymiddle = middle + np.array([0,self.dic['length_Body'] / 2])
-        (_,bodymiddle) = self.__rotationBodyParts(middle,bodymiddle,np.pi + self.torso)
-        self.bodyposition = bodymiddle
+        translatie = rightpos - self.locationRightFoot
+        self.bodyposition = self.bodyposition + translatie
+        self.__getCenterOfMass()
 
     def test_bodypositions(self):
         """ Get the bodypart locations."""

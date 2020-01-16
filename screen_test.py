@@ -22,15 +22,13 @@ class BouncyBalls(object):
     def __init__(self):
         # Space
         self._m = wheel_model.Wheel_model()
-        human = human_model.human(180,100,list([0,0]),20)
+        human = human_model.human(160,55,list([0,0]),40)
         right_foot_location = self._m.get_named_location("plank_1")
-        human.test_bodypositions()
-        human.setturned(True)
-        human.positionchange(0,17,35,43,35,43,275,275,347,347)
-        human.test_bodypositions()
-        self._m.add_force_on_wheel_named( "lower_spoke_1",56000)
-        self._m.add_force_on_wheel_named("upper_grip_2", -56000)
-        self._m.set_human_center_of_mass(human.getcog(),mass=100)
+        human.positionchange(0,0,11,70,169,110,0,0,0,0)
+        print(human.test_bodypositions())
+        human.rightFootOnMiddel(right_foot_location)
+        print(human.getcog())
+        self._m.set_human(human)
         self._space = self._m.space
         # self._space.gravity = (0.0, -900.0)
 
@@ -44,9 +42,9 @@ class BouncyBalls(object):
         pygame.init()
         self._screen = pygame.display.set_mode((1200, 400))
         self._clock = pygame.time.Clock()
-
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
-
+        self._draw_options.DRAW_SHAPE= True
+        self._space.debug_draw(self._draw_options)
         # Static barrier walls (lines) that the balls bounce off of
         # self._add_static_scenery()
 

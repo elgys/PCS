@@ -1,4 +1,5 @@
 import pymunk
+import human_model
 from pymunk.vec2d import Vec2d
 import numpy as np
 
@@ -81,6 +82,7 @@ class Wheel_model:
         self.__setup_rhonrad_ring(rhonrad)
         self.__setup_rhonrad_planks(rhonrad)
         self.__setup_rhonrad_spokes(rhonrad)
+        self.rhonrad = rhonrad
 
     def __setup_rhonrad_ring(self, rhonrad):
         """ Setup the shape of the outer ring of the wheel."""
@@ -137,6 +139,33 @@ class Wheel_model:
                 self.entity_addresses[name + '_' + str(2 - i)] = point
 
         self.entities += entities
+    def set_human(self,human):
+        """here we make a body for the human so we can show it in a
+            vizaulsation. this function will draw in the following sequence."""
+        places = human.test_bodypositions()
+        humanbody = []
+        #shoulderline
+        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
+        #left arm
+        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
+        #right arm
+        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
+        #hips
+        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
+        #left leg
+        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
+        #right leg
+        humanbody.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
+        humanbody.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+        self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
+        self.space.add(humanbody)
+
+
 
     def set_human_center_of_mass(self, center_of_mass, mass=-1):
         """ Set the center of mass for the human in the wheel, changing the mass
