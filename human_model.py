@@ -190,7 +190,7 @@ class human:
         self.leftLowerArm = leftlowerarm * (2*np.pi/360)
         self.leftUpperLeg = leftupperleg * (2*np.pi/360)
         self.leftLowerLeg = leftlowerleg * (2*np.pi/360)
-        self.__getCenterOfMass()
+        self.cog =self.__getCenterOfMass()
 
 
     def setturned(self,value):
@@ -214,7 +214,7 @@ class human:
             body."""
         translatie = rightpos - self.locationRightFoot
         self.bodyposition = self.bodyposition + translatie
-        self.__getCenterOfMass()
+        self.cog = self.__getCenterOfMass()
 
     def test_bodypositions(self):
         """ Get the bodypart locations."""
