@@ -5,14 +5,6 @@ class human:
 
     dic = {}
     def  __init__(self,length,weight,bodyposition,shouldersize):
-        """ Initialize the human class.
-            Set all rotation degrees of all limbs to zero.
-            Set the length in centimeter and the weight in kilograms.
-            Set the center of the body and shouldersize.
-            Set turned.
-            Create a dictonary with percentages of all limbs relative to total
-            body mass.
-            Calculate the center of mass of the whole body."""
         # here the values are given in degrees.
         self.head = 0
         self.torso = 0
@@ -38,6 +30,7 @@ class human:
         if "done" not in self.dic.keys():
             self.dic["done"] = 1
             f = open("humaninit.txt",'r')
+
             for line in f:
                 (key,value) = line.split()
                 self.dic[key] = float(value)
@@ -103,7 +96,9 @@ class human:
 
     def __getCenterOfMass(self):
         """ Calculate the center of mass of the total body.
-            Returns ([individual center of masses], [individual weights])."""
+            Returns ([individual center of masses], [individual weights]).
+            we also caclulate the location of the other parts and put them in
+            ourself."""
         CenterofMass=[]
         masses = []
         # Calculate the placement of the legs and their combined center of mass.
@@ -118,7 +113,7 @@ class human:
         rightLeg = legMiddle - sideLength
         leftLeg = legMiddle + sideLength
         self.locationRightHip = rightLeg
-        self.locationLeftHip =leftLeg
+        self.locationLeftHip = leftLeg
         # left upper leg caclulations
         (cogLeftUpperLeg,mass,leftKnee)= self.__legcalc(leftLeg,self.leftUpperLeg)
         self.locationLeftKnee = leftKnee
@@ -145,6 +140,9 @@ class human:
         (vec,armMiddle) = self.__rotationBodyParts(self.bodyposition,armMiddle,self.torso)
         rightArm = armMiddle - sideLength
         leftArm = armMiddle + sideLength
+        self.locationRightShoulder = rightArm
+        self.locationLeftShoulder = leftArm
+
         # right upper arm calculations
         (cogRightUpperArm,mass, rightElbow) = self.__armcalc(rightArm,self.rightUpperArm,True,True)
         self.locationRightElbow = rightElbow
@@ -156,12 +154,12 @@ class human:
         CenterofMass.append(cogRightLowerArm)
         masses.append(mass)
         # left upper arm calculations
-        (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.rightUpperArm,True,False)
+        (cogLeftUpperArm,mass, leftElbow) = self.__armcalc(leftArm,self.leftUpperArm,True,False)
         self.locationLeftElbow = leftElbow
         CenterofMass.append(cogLeftUpperArm)
         masses.append(mass)
         # left lower arm calculations
-        (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.rightLowerArm,False,False)
+        (cogLeftLowerArm,mass,lefthand) = self.__armcalc(leftElbow,self.leftLowerArm,False,False)
         self.locationLeftHand = lefthand
         CenterofMass.append(cogLeftLowerArm)
         masses.append(mass)
@@ -192,7 +190,8 @@ class human:
         self.leftLowerArm = leftlowerarm * (2*np.pi/360)
         self.leftUpperLeg = leftupperleg * (2*np.pi/360)
         self.leftLowerLeg = leftlowerleg * (2*np.pi/360)
-        self.cog = self.__getCenterOfMass()
+        self.__getCenterOfMass()
+
 
     def setturned(self,value):
         """ Change the viewing direction of the gymnast and calculate its
@@ -206,21 +205,23 @@ class human:
         """ Get the center of mass."""
         return self.cog
 
+    def getweigth(self):
+        """ get the mass of the human."""
+        return self.weight
+
     def rightFootOnMiddel(self,rightpos):
         """ Calculte from the position of the right foot the center of the
             body."""
-        rightKnee =rightpos + np.array([0,self.length * self.dic['length_Lower_Leg']])
-        (_,rightKnee) = self.__rotationBodyParts(rightpos,rightKnee,np.pi + self.rightLowerLeg)
-        rightHip = rightKnee + np.array([0,self.length * self.dic['length_Upper_Leg']])
-        (_,rightHip) = self.__rotationBodyParts(rightKnee,rightHip,np.pi + self.rightUpperLeg)
-        middle = rightHip + np.array([self.shoulderSize/2,0 ])
-        (_,middle) = self.__rotationBodyParts(rightHip,middle,np.pi + self.torso)
-        bodymiddle = middle + np.array([0,self.dic['length_Body'] / 2])
-        (_,bodymiddle) = self.__rotationBodyParts(middle,bodymiddle,np.pi + self.torso)
-        self.bodyposition = bodymiddle
+        translatie = rightpos - self.locationRightFoot
+        self.bodyposition = self.bodyposition + translatie
+        self.__getCenterOfMass()
 
     def test_bodypositions(self):
         """ Get the bodypart locations."""
-        array = [self.locationHead,self.locationLeftElbow,self.locationLeftHand,self.locationRightElbow,self.locationRightHand,self.locationLeftKnee,self.locationLeftFoot,self.locationRightKnee,self.locationRightFoot]
+        array = [self.locationHead,self.locationLeftShoulder,self.locationLeftElbow,
+                 self.locationLeftHand,self.locationRightShoulder,self.locationRightElbow,
+                 self.locationRightHand,self.locationLeftHip,self.locationLeftKnee,
+                 self.locationLeftFoot,self.locationRightHip,self.locationRightKnee,
+                 self.locationRightFoot]
 
         return array
