@@ -1,5 +1,5 @@
 0 setturned True
-0 positionchange 0 163 35 43 35 43 15 15 347 347
+0 positionchange 0 343 30 30 210 210 15 15 347 347
 0 power upper_spoke_2 -5400
 0 power plank_1 2700
 180 power upper_spoke_2 5400
