@@ -41,7 +41,7 @@ class BouncyBalls(object):
 
         # pygame
         pygame.init()
-        self._screen = pygame.display.set_mode((1200, 400))
+        self._screen = pygame.display.set_mode((1000, 400))
         self._clock = pygame.time.Clock()
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
         self._draw_options.DRAW_SHAPE= True

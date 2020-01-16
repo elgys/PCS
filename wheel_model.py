@@ -33,7 +33,7 @@ COULOMB_FRICTION_CONSTANT = 0.7  # The friction coefficient for PVC on wood
 
 DT = 0.01  # seconds, time difference between simulation steps
 
-WHEEL_MIDDLE = Vec2d(300, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
+WHEEL_MIDDLE = Vec2d(500, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
 class Wheel_model:
@@ -183,7 +183,7 @@ class Wheel_model:
         if mass != -1:
             human.mass = mass
 
-    def get_named_location(self,name):
+    def get_named_location(self, name):
         """ Get the location of the entity relative to the middle of the wheel"""
         return self.entity_addresses[name].offset
 
@@ -268,7 +268,7 @@ class Wheel_model:
         for force in to_remove:
             self.remove_force_on_wheel(force)
 
-    def run(self, max_run_time=60.0):
+    def run(self, max_run_time=60.0, visual=False):
         """ Run the simulation (without visuals);
             max_run_time is in the simulation, ergo the default is simulate 60
             seconds in simulation."""
@@ -294,7 +294,7 @@ class Wheel_model:
 
 
 if __name__ == "__main__":
-    model = Model()
+    model = Wheel_model()
     force = model.add_force_on_wheel((1, 0), 5800, (0, -30))
     model.add_angle_action(np.pi/2, model.remove_force_on_wheel, force)
-    model.run()
+    print(model.run())
