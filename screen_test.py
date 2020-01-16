@@ -28,8 +28,8 @@ class BouncyBalls(object):
         human.setturned(True)
         human.positionchange(0,17,35,43,35,43,275,275,347,347)
         human.test_bodypositions()
-        self._m.add_force_on_wheel_named( "lower_spoke_1",56000)
-        self._m.add_force_on_wheel_named("upper_grip_2", -56000)
+        # self._m.add_force_on_wheel_named( "lower_spoke_1",56000)
+        # self._m.add_force_on_wheel_named("upper_grip_2", -56000)
         self._m.set_human_center_of_mass(human.getcog(),mass=100)
         self._space = self._m.space
         # self._space.gravity = (0.0, -900.0)
@@ -42,7 +42,7 @@ class BouncyBalls(object):
 
         # pygame
         pygame.init()
-        self._screen = pygame.display.set_mode((1200, 400))
+        self._screen = pygame.display.set_mode((1000, 400))
         self._clock = pygame.time.Clock()
 
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)

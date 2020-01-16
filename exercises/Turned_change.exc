@@ -1,8 +1,8 @@
 0 setturned True
 0 positionchange 0 163 35 43 35 43 275 275 347 347
-0 power lower_spoke_1 5400
-0 power upper_grip_2 -5400
+0 power lower_spoke_1 power1
+0 power upper_grip_2 power2
 180 remove_all_forces
 180 positionchange 0 163 35 43 35 43 85 85 347 347
-180 power lower_spoke_2 5400
-180 power upper_grip_2 5400
+180 power lower_spoke_2 power1
+180 power upper_grip_2 power2

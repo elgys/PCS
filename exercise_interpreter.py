@@ -17,11 +17,13 @@ def name_to_function(name, w_model, h_model):
 
 
 class Exercise_simulator:
-    def __init__(self, filename, auto_parse=True):
+    def __init__(self, filename, iterations, simul_time=20.0, auto_parse=True):
         self.file = filename
+        self.iterations = iterations
         self.parsed = False
         self.angle_actions = []  # [[angle, f, *args]]
         self.variables = {}
+        self.simul_time = simul_time
         if auto_parse:
             self.parse()
 
@@ -46,10 +48,13 @@ class Exercise_simulator:
             for variable, val in self.variables.items():
                 args = np.where(np.array(args) == variable,
                                 val, np.array(args))
+                args = np.where(np.array(args) == '-' + variable,
+                                -val, np.array(args))
             for variable, val in variables.items():
-                print(np.array(args) == variable)
                 args = np.where(np.array(args) == variable,
                                 val, np.array(args))
+                args = np.where(np.array(args) == '-' + variable,
+                                -val, np.array(args))
             angle = int(angle)
             if angle == 0:
                 name_to_function(function, w_model, h_model)(*args)
@@ -58,13 +63,14 @@ class Exercise_simulator:
                     angle * np.pi/180, name_to_function(function, w_model, h_model), *args)
         w_model.add_angle_action(2*np.pi, w_model.run_success)
 
-    def run_simulation(self, variables={}):
+    def run_simulation(self, variables={}, visual=False):
         w_model = wheel_model.Wheel_model()
-        h_model = human_model.human(180, 100, list([0, 0]), 20)
+        h_model = human_model.human(160, 55, list([0, 0]), 42)
         w_model.set_human_center_of_mass(h_model.getcog())
         self.setup_angle_actions_model(w_model, h_model, variables=variables)
-        print(w_model.angle_actions)
-        print(w_model.run())
+        # print(w_model.angle_actions)
+        # print(w_model.forces)
+        return w_model.run(max_run_time=self.simul_time, visual=visual)
 
 
 if __name__ == "__main__":
@@ -74,9 +80,19 @@ if __name__ == "__main__":
     parser.add_argument('--file', type=str, default='./exercises/T_pose.exc',
                         help='The name of the file to be simulated (default=%(default)s)')
     parser.add_argument('-t', type=int, default=1, metavar='N',
-                        help='amount of times to simulate the current file (default=%(default)d) ')
+                        help='Amount of times to simulate the current file (default=%(default)d)')
+    parser.add_argument('-r', type=str, default='./results/default_results.res',
+                        help='The place where you want to store your results (default=%(default)s)')
+    parser.add_argument('--simul_time', type=float, default=20.0,
+                        help='The simulation time in seconds every run gets before resulting in failure (default=%(default)d)')
 
     args = parser.parse_args()
 
-    simul = Exercise_simulator(args.file, args.t)
-    simul.run_simulation(variables={'var_power1': 6000, 'var_power2': 3000})
+    simul = Exercise_simulator(args.file, args.t, args.simul_time)
+
+    with open(args.r, 'w+') as f:
+        for i in np.logspace(3, 6, 50):
+            f.write(str(i) + ' ' + str(simul.run_simulation(
+                variables={'power1': i, 'power2': i/2})) + '\n')
+            # print(str(i) + ' ' + str(simul.run_simulation(
+            #     variables={'power1': i, 'power2': i/2})) + '\n')
