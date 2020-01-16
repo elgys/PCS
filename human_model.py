@@ -102,13 +102,13 @@ class human:
         CenterofMass=[]
         masses = []
         # Calculate the placement of the legs and their combined center of mass.
-        legMiddle = self.bodyposition - (np.array([0, self.length * self.dic["length_Body"] /2]))
+        legMiddle = self.bodyposition - (np.array([0, self.length * self.dic["length_Body"] / 2]))
         (vec, legMiddle)= self.__rotationBodyParts(self.bodyposition, legMiddle, self.torso)
 
         if self.turned:
             sideLength = [0, 0]
         else:
-            sideLength = [self.shoulderSize/ 2, 0]
+            sideLength = [self.shoulderSize / 2, 0]
 
         rightLeg = legMiddle - sideLength
         leftLeg = legMiddle + sideLength
@@ -182,17 +182,18 @@ class human:
                        leftlowerleg=0, rightupperleg=0, rightlowerleg=0):
         """ Change the position of the bodyparts in radians and calculate
             its new center of mass."""
-        self.head = head * (2*np.pi/360)
-        self.torso = torso * (2*np.pi/360)
-        self.rightUpperArm = rightupperarm * (2*np.pi/360)
-        self.rightLowerArm = rightlowerarm * (2*np.pi/360)
-        self.rightUpperLeg = rightupperleg * (2*np.pi/360)
-        self.rightLowerLeg = rightlowerleg * (2*np.pi/360)
-        self.leftUpperArm = leftupperarm * (2*np.pi/360)
-        self.leftLowerArm = leftlowerarm * (2*np.pi/360)
-        self.leftUpperLeg = leftupperleg * (2*np.pi/360)
-        self.leftLowerLeg = leftlowerleg * (2*np.pi/360)
-        self.cog =self.__getCenterOfMass()
+        degree_to_rad = np.pi / 180
+        self.head = head * degree_to_rad
+        self.torso = torso * degree_to_rad
+        self.rightUpperArm = rightupperarm * degree_to_rad
+        self.rightLowerArm = rightlowerarm * degree_to_rad
+        self.rightUpperLeg = rightupperleg * degree_to_rad
+        self.rightLowerLeg = rightlowerleg * degree_to_rad
+        self.leftUpperArm = leftupperarm * degree_to_rad
+        self.leftLowerArm = leftlowerarm * degree_to_rad
+        self.leftUpperLeg = leftupperleg * degree_to_rad
+        self.leftLowerLeg = leftlowerleg * degree_to_rad
+        self.cog = self.__getCenterOfMass()
 
 
     def setturned(self, value):
