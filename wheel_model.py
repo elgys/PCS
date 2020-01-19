@@ -282,7 +282,7 @@ class Wheel_model:
             if self.current_time > max_run_time:
                 self.run_failure()
 
-        return self.success, self.max_angle
+        return self.max_angle
 
     def step(self):
         """ Take a step in the simulation; also apply all angle actions

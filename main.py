@@ -1,4 +1,5 @@
 import exercise_interpreter
+import numpy as np
 
 
 if __name__ == "__main__":
@@ -22,7 +23,8 @@ if __name__ == "__main__":
 
     with open(args.r, 'w+') as f:
         for i in np.logspace(3, 6, 50):
-            f.write(str(i) + ' ' + str(simul.run_simulation(
-                variables={'power1': i, 'power2': i/2})) + '\n')
+            for j in np.logspace(3, 6, 50):
+                f.write(str(i) + ' ' + str(j) + ' ' + str(simul.run_simulation(
+                    variables={'power1': i, 'power2': j})) + '\n')
             # print(str(i) + ' ' + str(simul.run_simulation(
             #     variables={'power1': i, 'power2': i/2})) + '\n')

@@ -49,12 +49,7 @@ class Exercise_simulator:
             self.parse()
 
         for angle, function, *args in self.angle_actions:
-            for variable, val in self.variables.items():
-                args = np.where(np.array(args) == variable,
-                                val, np.array(args))
-                args = np.where(np.array(args) == '-' + variable,
-                                -val, np.array(args))
-            for variable, val in variables.items():
+            for variable, val in {**self.variables, **variables}.items():
                 args = np.where(np.array(args) == variable,
                                 val, np.array(args))
                 args = np.where(np.array(args) == '-' + variable,
@@ -69,7 +64,7 @@ class Exercise_simulator:
 
         w_model.add_angle_action(2*np.pi, w_model.run_success)
 
-    def run_simulation(self, variables={}):
+    def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
         w_model = wheel_model.Wheel_model()
         h_model = human_model.human(160, 55, list([0, 0]), 42)
@@ -77,7 +72,5 @@ class Exercise_simulator:
         w_model.set_human_center_of_mass(h_model.getcog())
         self.setup_angle_actions_model(w_model, h_model, variables=variables)
 
-        print(w_model.angle_actions)
         res = w_model.run(max_run_time=self.simul_time, visual=visual)
-        print(res)
         return res
