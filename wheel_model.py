@@ -1,8 +1,14 @@
-import pymunk
-import human_model
-from pymunk.vec2d import Vec2d
 import numpy as np
+import human_model
 
+from pymunk.vec2d import Vec2d
+import pymunk
+import pymunk.pygame_util
+
+import pygame
+from pygame.key import *
+from pygame.locals import *
+from pygame.color import *
 
 WHEEL_RING_MASS = 22.0 # kg, total mass should be around 55 total
 WHEEL_RADIUS = 105.0 # cm
@@ -37,7 +43,7 @@ WHEEL_MIDDLE = Vec2d(500, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
 class Wheel_model:
-    def __init__(self):
+    def __init__(self, visual=False):
         self.space = pymunk.Space()
         self.space.gravity = (0.0, GRAVITY_CONSTANT) # Generic gravity
         self.space.damping = 0.99 # Generic resistance
@@ -54,6 +60,16 @@ class Wheel_model:
         self.angle_actions = [] # [[angle, f, *args]]
         self.run_simulation = True
         self.success = False
+        self.visual = visual
+
+        if visual:
+            print('visual init')
+            pygame.init()
+            self._screen = pygame.display.set_mode((1000, 400))
+            self._clock = pygame.time.Clock()
+            self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
+            self._draw_options.DRAW_SHAPE= True
+            self.space.debug_draw(self._draw_options)
 
     def __setup_floor(self):
         """ Setup the static floor beneath the wheel."""
@@ -268,33 +284,46 @@ class Wheel_model:
         for force in to_remove:
             self.remove_force_on_wheel(force)
 
-    def run(self, max_run_time=60.0, visual=False):
+    def run(self, max_run_time=60.0):
         """ Run the simulation (without visuals);
             max_run_time is in the simulation, ergo the default is simulate 60
             seconds in simulation."""
-        while self.run_simulation:
-            self.step()
-            self.current_time += DT
-
-            if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
-                self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
-
-            if self.current_time > max_run_time:
-                self.run_failure()
+        if not self.visual:
+            while self.run_simulation:
+                self.step(max_run_time)
+        else:
+            while self.run_simulation:
+                self.step(max_run_time)
+                self.visual_step()
 
         return self.max_angle
 
-    def step(self):
+
+    def step(self, max_run_time):
         """ Take a step in the simulation; also apply all angle actions
             (actions which occur after a specified angle) and apply all forces
             currently working on the wheel which are not gravity or friction."""
         self.__apply_angle_actions()
         self.__apply_forces()
         self.space.step(DT)
+        self.current_time += DT
 
+        if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
+            self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
+
+        if self.current_time > max_run_time:
+            self.run_failure()
+
+    def visual_step(self):
+        self._screen.fill(THECOLORS["white"])
+        self.space.debug_draw(self._draw_options)
+        pygame.display.flip()
+        # Delay fixed time between frames
+        self._clock.tick(50)
+        pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
 
 if __name__ == "__main__":
-    model = Wheel_model()
+    model = Wheel_model(visual=True)
     force = model.add_force_on_wheel((1, 0), 5800, (0, -30))
     model.add_angle_action(np.pi/2, model.remove_force_on_wheel, force)
     print(model.run())

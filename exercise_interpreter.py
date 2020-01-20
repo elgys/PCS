@@ -66,11 +66,11 @@ class Exercise_simulator:
 
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
-        w_model = wheel_model.Wheel_model()
+        w_model = wheel_model.Wheel_model(visual=visual)
         h_model = human_model.human(160, 55, list([0, 0]), 42)
 
         w_model.set_human_center_of_mass(h_model.getcog())
         self.setup_angle_actions_model(w_model, h_model, variables=variables)
 
-        res = w_model.run(max_run_time=self.simul_time, visual=visual)
+        res = w_model.run(max_run_time=self.simul_time)
         return res
