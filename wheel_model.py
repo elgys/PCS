@@ -142,6 +142,7 @@ class Wheel_model:
     def set_human(self,human):
         """here we make a body for the human so we can show it in a
             vizaulsation. this function will draw in the following sequence."""
+        human.rightFootOnMiddel(self.entity_addresses["plank_1"].offset)
         places = human.test_bodypositions()
         humanbody = []
         #shoulderline
