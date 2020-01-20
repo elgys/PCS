@@ -1,5 +1,3 @@
-""" This file is a collection of all physics calculations of the human model."""
-
 import numpy as np
 import math
 def getCenterOfMass(centerofmass,weight):
@@ -8,7 +6,7 @@ def getCenterOfMass(centerofmass,weight):
         its input as [[x_cordinate1,y_cordinate1],[x_cordinate2,y_cordinate2]],
         [weight1,weight2]. And outputs [x_cordinate, y_cordinate]."""
 
-        
+
     return np.average(centerofmass,axis=0,weights=weight)
 
 
