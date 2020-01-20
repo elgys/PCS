@@ -1,4 +1,5 @@
-import exercise_interpreter as inter
+import simulator as sim
+import debug
 import numpy as np
 import argparse
 
@@ -23,11 +24,23 @@ if __name__ == "__main__":
                         Also if this not set it will not save the results')
     parser.add_argument('--simul_time', type=float, default=20.0,
                         help='The simulation time in seconds every run gets before resulting in failure (default=%(default)d)')
+    parser.add_argument('--human_size',type=int, default = 160,
+                        help='This will give the humans size that be used for the sim. (default=%(default)d)')
+    parser.add_argument('--human_weight',type=int,default=55,
+                        help='This will give the weight of a human (default=%(default)d)')
+    parser.add_argument('-d','--degbug_view',action='store_true',help ='Here we will call \
+                        upon the drwing of pygame and pymunk is usefull for debug drawing')
+
 
     args = parser.parse_args()
 
-    simul = inter.Exercise_simulator(args.file, args.t, args.simul_time)
+    simul = sim.simulator(args.file, args.t,
+                                     args.simul_time,
+                                     args.human_size,
+                                     args.human_weight)
 
+    if args.d:
+        debug_view = debug(simul)
 
-    if args.r is not "":
+    if args.r is not "" and args.d =! True:
         results(args.r)

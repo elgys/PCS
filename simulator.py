@@ -17,17 +17,24 @@ def name_to_function(name, w_model, h_model):
         return w_model.remove_all_forces
 
 
-class Exercise_simulator:
-    def __init__(self, filename, iterations, simul_time=20.0, auto_parse=True):
+class simulator:
+    def __init__(self, filename, iterations, simul_time=20.0,
+                 length = 160,weight = 55, auto_parse=True):
         self.file = filename
         self.iterations = iterations
+        self.lenght = 160
+        self.weight = 55
         self.parsed = False
-        # [[angle, f, *args]]
         self.angle_actions = []
         self.variables = {}
         self.simul_time = simul_time
+        self.w_model = wheel_model.Wheel_model()
+        self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
+        self.w_model.set_human(self.h_model)
+        self.setup_angle_actions_model(self.w_model, self.h_model, variables=variables)
         if auto_parse:
             self.parse()
+
 
     def parse(self):
         """ Convert the contents of the file given in the init to a list of
@@ -43,7 +50,7 @@ class Exercise_simulator:
             name in the exercise files with the given value."""
         self.variables[name] = value
 
-    def setup_angle_actions_model(self, w_model, h_model, auto_parse=True, variables={}):
+    def setup_angle_actions_model(self, auto_parse=True, variables={}):
         """ Setup the actual angle actions in the wheel model"""
         if not self.parsed and auto_parse:
             self.parse()
@@ -57,19 +64,15 @@ class Exercise_simulator:
             angle = int(angle)
 
             if angle == 0:
-                name_to_function(function, w_model, h_model)(*args)
+                name_to_function(function, self.w_model, self.h_model)(*args)
             else:
-                w_model.add_angle_action(
-                    angle * np.pi/180, name_to_function(function, w_model, h_model), *args)
+                self.w_model.add_angle_action(
+                    angle * np.pi/180, name_to_function(function, self.w_model,self.h_model), *args)
 
-        w_model.add_angle_action(2*np.pi, w_model.run_success)
+        self.w_model.add_angle_action(2*np.pi, self.w_model.run_success)
 
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
-        w_model = wheel_model.Wheel_model()
-        h_model = human_model.human(160, 55, list([0, 0]), 42)
-        w_model.set_human(h_model)
-        self.setup_angle_actions_model(w_model, h_model, variables=variables)
 
-        res = w_model.run(max_run_time=self.simul_time, visual=visual)
+        res = self.w_model.run(max_run_time=self.simul_time, visual=visual)
         return res

@@ -292,10 +292,3 @@ class Wheel_model:
         self.__apply_angle_actions()
         self.__apply_forces()
         self.space.step(DT)
-
-
-if __name__ == "__main__":
-    model = Wheel_model()
-    force = model.add_force_on_wheel((1, 0), 5800, (0, -30))
-    model.add_angle_action(np.pi/2, model.remove_force_on_wheel, force)
-    print(model.run())
