@@ -19,7 +19,7 @@ def name_to_function(name, w_model, h_model):
 
 class simulator:
     def __init__(self, filename, iterations, simul_time=20.0,
-                 length = 160,weight = 55, auto_parse=True):
+                 length = 160,weight = 55, auto_parse=True, visual=False):
         self.file = filename
         self.iterations = iterations
         self.lenght = 160
@@ -28,10 +28,11 @@ class simulator:
         self.angle_actions = []
         self.variables = {}
         self.simul_time = simul_time
-        self.w_model = wheel_model.Wheel_model()
+        self.w_model = wheel_model.Wheel_model(visual)
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
         self.w_model.set_human(self.h_model)
         self.setup_angle_actions_model(self.w_model, self.h_model, variables=variables)
+        self.visual = visual
         if auto_parse:
             self.parse()
 
@@ -55,7 +56,7 @@ class simulator:
         if not self.parsed and auto_parse:
             self.parse()
 
-        for angle, function, *args in self.angle_actions:
+        for angle, function,*args in self.angle_actions:
             for variable, val in {**self.variables, **variables}.items():
                 args = np.where(np.array(args) == variable,
                                 val, np.array(args))
@@ -73,6 +74,5 @@ class simulator:
 
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
-
         res = self.w_model.run(max_run_time=self.simul_time, visual=visual)
         return res

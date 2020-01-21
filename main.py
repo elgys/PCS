@@ -8,10 +8,10 @@ def results(file):
         for i in np.logspace(3, 6, 50):
             for j in np.logspace(3, 6, 50):
                 f.write(str(i) + ' ' + str(j) + ' ' + str(simul.run_simulation(
-                    variables={'power1': i, 'power2': j})) + '\n')
+                    variables={'power1': i, 'power2': j})) + '\n',visual=args.d)
+
 
 if __name__ == "__main__":
-
 
     parser = argparse.ArgumentParser(
         description='Process an exercise according to a given .exc file.')
@@ -28,19 +28,15 @@ if __name__ == "__main__":
                         help='This will give the humans size that be used for the sim. (default=%(default)d)')
     parser.add_argument('--human_weight',type=int,default=55,
                         help='This will give the weight of a human (default=%(default)d)')
-    parser.add_argument('-d','--degbug_view',action='store_true',help ='Here we will call \
+    parser.add_argument('-d','--debug_view',action='store_true',help ='Here we will call \
                         upon the drwing of pygame and pymunk is usefull for debug drawing')
-
 
     args = parser.parse_args()
 
     simul = sim.simulator(args.file, args.t,
                                      args.simul_time,
                                      args.human_size,
-                                     args.human_weight)
-
-    if args.d:
-        debug_view = debug(simul)
-
-    if args.r is not "" and args.d =! True:
+                                     args.human_weight,
+                                     visual=args.debug_view)
+    if args.r is not "":
         results(args.r)

@@ -64,18 +64,6 @@ class Debug(object):
             self._clock.tick(1)
             pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
 
-    def _add_static_scenery(self):
-        """
-        Create the static bodies.
-        :return: None
-        """
-        static_body = self._space.static_body
-        static_lines = [pymunk.Segment(static_body, (111.0, 280.0), (407.0, 246.0), 0.0),
-                        pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)]
-        for line in static_lines:
-            line.elasticity = 0.95
-            line.friction = 0.9
-        self._space.add(static_lines)
 
     def _process_events(self):
         """
