@@ -43,6 +43,7 @@ class Wheel_model:
         self.space.damping = 0.99 # Generic resistance
         self.entities = []
         self.entity_addresses = {}
+        self.human_body = []
 
         self.__setup_rhonrad()
         self.__setup_floor()
@@ -53,7 +54,6 @@ class Wheel_model:
         self.forces = [] # [[force vector, location vector, end_time]]
         self.angle_actions = [] # [[angle, f, *args]]
         self.run_simulation = True
-        self.success = False
 
     def __setup_floor(self):
         """ Setup the static floor beneath the wheel."""
@@ -141,30 +141,33 @@ class Wheel_model:
         self.entities += entities
     def set_human(self,human):
         """here we make a body for the human so we can show it in a
-            vizaulsation. this function will draw in the following sequence."""
+            visualization. this function will draw in the following sequence."""
+        if self.human_body:
+            self.space.remove(self.human_body)
         human.rightFootOnMiddel(self.entity_addresses["plank_1"].offset)
         places = human.test_bodypositions()
-        humanbody = []
+        human_body = []
         #shoulderline
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
         #left arm
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
         #right arm
-        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
         #hips
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
         #left leg
-        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
         #right leg
-        humanbody.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
         self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
-        self.space.add(humanbody)
+        self.human_body = human_body
+        self.space.add(human_body)
 
 
 
@@ -260,7 +263,7 @@ class Wheel_model:
         to_remove = []
 
         for [force_vector, location, end_time] in self.forces:
-            self.entity_addresses['rhonrad'].apply_force_at_local_point(
+                self.entity_addresses['rhonrad'].apply_force_at_local_point(
                 force_vector, location)
 
             if end_time != -1 and end_time >= self.current_time:
@@ -292,3 +295,10 @@ class Wheel_model:
         self.__apply_angle_actions()
         self.__apply_forces()
         self.space.step(DT)
+        self.current_time += DT
+
+        if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
+            self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
+
+        if self.current_time > max_run_time:
+            self.run_failure()

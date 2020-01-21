@@ -7,10 +7,10 @@ def name_to_function(name, w_model, h_model):
     """ Interpret the key words in the excercise files into functions."""
     if name == 'setturned':
         return lambda boolean: (h_model.setturned(bool(boolean)),
-                                w_model.set_human_center_of_mass(h_model.getcog()))
+                                w_model.set_human(h_model))
     elif name == 'positionchange':
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)),
-                              w_model.set_human_center_of_mass(h_model.getcog()))
+                              w_model.set_human(h_model))
     elif name == 'power':
         return lambda place, strength: (w_model.add_force_on_wheel_named(place, float(strength)))
     elif name == 'remove_all_forces':
@@ -31,10 +31,11 @@ class simulator:
         self.w_model = wheel_model.Wheel_model(visual)
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
         self.w_model.set_human(self.h_model)
-        self.setup_angle_actions_model(self.w_model, self.h_model, variables=variables)
-        self.visual = visual
         if auto_parse:
             self.parse()
+            self.variables = self.variable_calc()
+            self.setup_angle_actions_model(self.w_model,self.variables)
+        self.visual = visual
 
 
     def parse(self):
@@ -72,6 +73,7 @@ class simulator:
 
         self.w_model.add_angle_action(2*np.pi, self.w_model.run_success)
 
+    def variable_calc()
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
         res = self.w_model.run(max_run_time=self.simul_time, visual=visual)
