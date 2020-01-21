@@ -49,6 +49,7 @@ class Wheel_model:
         self.space.damping = 0.99 # Generic resistance
         self.entities = []
         self.entity_addresses = {}
+        self.human_body = []
 
         self.__setup_rhonrad()
         self.__setup_floor()
@@ -63,13 +64,20 @@ class Wheel_model:
         self.visual = visual
 
         if visual:
-            print('visual init')
-            pygame.init()
-            self._screen = pygame.display.set_mode((1000, 400))
-            self._clock = pygame.time.Clock()
-            self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
-            self._draw_options.DRAW_SHAPE= True
-            self.space.debug_draw(self._draw_options)
+            self.visual_init()
+            
+
+    def visual_init(self):
+        """Initialize the screen and clock for visualization.
+        All visualization code taken from
+        https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py"""
+        pygame.init()
+        self._screen = pygame.display.set_mode((1000, 400))
+        self._clock = pygame.time.Clock()
+        self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
+        self._draw_options.DRAW_SHAPE= True
+        self.space.debug_draw(self._draw_options)
+
 
     def __setup_floor(self):
         """ Setup the static floor beneath the wheel."""
@@ -157,30 +165,33 @@ class Wheel_model:
         self.entities += entities
     def set_human(self,human):
         """here we make a body for the human so we can show it in a
-            vizaulsation. this function will draw in the following sequence."""
+            visualization. this function will draw in the following sequence."""
+        if self.human_body:
+            self.space.remove(self.human_body)
         human.rightFootOnMiddel(self.entity_addresses["plank_1"].offset)
         places = human.test_bodypositions()
-        humanbody = []
+        human_body = []
         #shoulderline
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
         #left arm
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
         #right arm
-        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
         #hips
-        humanbody.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
         #left leg
-        humanbody.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
         #right leg
-        humanbody.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
-        humanbody.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
+        human_body.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
         self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
-        self.space.add(humanbody)
+        self.human_body = human_body
+        self.space.add(human_body)
 
 
 
@@ -316,12 +327,26 @@ class Wheel_model:
             self.run_failure()
 
     def visual_step(self):
+        """Handle all extra actions needed to handle a visualization of the
+        wheel. All code for visualization was taken from
+        https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py"""
+        # clear screen and redraw all shapes in space
         self._screen.fill(THECOLORS["white"])
         self.space.debug_draw(self._draw_options)
         pygame.display.flip()
+
         # Delay fixed time between frames
         self._clock.tick(50)
         pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
+
+        # Handle events for quitting the simulation and screen capture
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                self.run_simulation = False
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                self.run_simulation = False
+            elif event.type == KEYDOWN and event.key == K_p:
+                pygame.image.save(self._screen, "wheel_capture.png")
 
 if __name__ == "__main__":
     model = Wheel_model(visual=True)

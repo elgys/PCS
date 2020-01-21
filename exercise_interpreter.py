@@ -7,10 +7,10 @@ def name_to_function(name, w_model, h_model):
     """ Interpret the key words in the excercise files into functions."""
     if name == 'setturned':
         return lambda boolean: (h_model.setturned(bool(boolean)),
-                                w_model.set_human_center_of_mass(h_model.getcog()))
+                                w_model.set_human(h_model))
     elif name == 'positionchange':
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)),
-                              w_model.set_human_center_of_mass(h_model.getcog()))
+                              w_model.set_human(h_model))
     elif name == 'power':
         return lambda place, strength: (w_model.add_force_on_wheel_named(place, float(strength)))
     elif name == 'remove_all_forces':
