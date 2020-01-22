@@ -7,10 +7,10 @@ def name_to_function(name, w_model, h_model):
     """ Interpret the key words in the excercise files into functions."""
     if name == 'setturned':
         return lambda boolean: (h_model.setturned(bool(boolean)),
-                                w_model.set_human_center_of_mass(h_model.getcog()))
+                                w_model.set_human(h_model))
     elif name == 'positionchange':
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)),
-                              w_model.set_human_center_of_mass(h_model.getcog()))
+                              w_model.set_human(h_model))
     elif name == 'power':
         return lambda place, strength: (w_model.add_force_on_wheel_named(place, float(strength)))
     elif name == 'remove_all_forces':
@@ -18,7 +18,7 @@ def name_to_function(name, w_model, h_model):
 
 
 class Exercise_simulator:
-    def __init__(self, filename, iterations, simul_time=20.0, auto_parse=True):
+    def __init__(self, filename, iterations, simul_time=20.0, auto_parse=True, visual=False):
         self.file = filename
         self.iterations = iterations
         self.parsed = False
@@ -26,6 +26,7 @@ class Exercise_simulator:
         self.angle_actions = []
         self.variables = {}
         self.simul_time = simul_time
+        self.visual = visual
         if auto_parse:
             self.parse()
 
@@ -66,10 +67,10 @@ class Exercise_simulator:
 
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
-        w_model = wheel_model.Wheel_model()
+        w_model = wheel_model.Wheel_model(visual=(visual or self.visual))
         h_model = human_model.human(160, 55, list([0, 0]), 42)
         w_model.set_human(h_model)
         self.setup_angle_actions_model(w_model, h_model, variables=variables)
 
-        res = w_model.run(max_run_time=self.simul_time, visual=visual)
+        res = w_model.run(max_run_time=self.simul_time)
         return res
