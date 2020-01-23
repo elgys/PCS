@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 
-def main(X, Y, Z):
+def main(X, Y, Z, title=None):
     # fig = plt.figure()
     # ax = fig.add_subplot(111, projection='3d')
     #
@@ -31,21 +31,29 @@ def main(X, Y, Z):
 
     cMap = colors.ListedColormap(['red', 'orange', 'green'])
     fig, ax = plt.subplots()
-    heatmap = ax.imshow(Z,cmap='gray',interpolation='none', extent=[10,100000,10,100000], origin='lower')
+    heatmap = ax.imshow(Z, cmap='gray', interpolation='none', extent=[
+                        10, 500, 10, 500], origin='lower')
     cbar = fig.colorbar(heatmap, ax=ax, extend='max')
+    # plt.xscale('log')
+    # plt.yscale('log')
 
     cbar.set_label("Degrees turned")
-    ax.set_xlabel("Power leg")
-    ax.set_ylabel("Power hand")
+    ax.set_xlabel("Power leg (N)")
+    ax.set_ylabel("Power hand (N)")
+    if title:
+        ax.set_title(str(title) + " position")
     plt.show()
 
 
-# def main():
-#     pass
-
-
 if __name__ == "__main__":
-    filename = './results/default_results.res'
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='Plot a res file in a heatmap.')
+    parser.add_argument('file', type=str, default='./results/default_results.res',
+                        help='The name of the file to be plotted (default=%(default)s)')
+
+    args = parser.parse_args()
+    filename = args.file
     X, Y, Z = [], [], []
     with open(filename) as f:
         for line in f:
@@ -58,4 +66,4 @@ if __name__ == "__main__":
             Z[-1].append(z)
     X, Y = np.meshgrid(X, Y)
     main(np.array(X, dtype=float), np.array(
-        Y, dtype=float), np.array(Z, dtype=float))
+        Y, dtype=float), np.array(Z, dtype=float), title=(filename.split('/')[-1][:-4]).replace('_', ' '))

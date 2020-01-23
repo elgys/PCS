@@ -6,8 +6,7 @@ import numpy as np
 def name_to_function(name, w_model, h_model):
     """ Interpret the key words in the excercise files into functions."""
     if name == 'setturned':
-        return lambda boolean: (h_model.setturned(bool(boolean)),
-                                w_model.set_human(h_model))
+        return lambda boolean: (h_model.setturned(boolean == 'True'))
     elif name == 'positionchange':
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)),
                               w_model.set_human(h_model))

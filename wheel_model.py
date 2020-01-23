@@ -39,7 +39,8 @@ COULOMB_FRICTION_CONSTANT = 0.7  # The friction coefficient for PVC on wood
 
 DT = 0.01  # seconds, time difference between simulation steps
 
-WHEEL_MIDDLE = Vec2d(500, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
+#placement of the wheel in the space.
+WHEEL_MIDDLE = Vec2d(700, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
 class Wheel_model:
@@ -72,7 +73,7 @@ class Wheel_model:
         All visualization code taken from
         https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py"""
         pygame.init()
-        self._screen = pygame.display.set_mode((1000, 400))
+        self._screen = pygame.display.set_mode((1400, 400))
         self._clock = pygame.time.Clock()
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
         self._draw_options.DRAW_SHAPE= True
@@ -267,17 +268,27 @@ class Wheel_model:
         self.success = True
         self.run_simulation = False
 
-    def __apply_angle_actions(self):
+    def __apply_angle_actions(self, ordered=True):
         """ Apply function f with arguments args when the wheel has turned angle
             radians."""
         to_remove = []
 
-        for angle_action in self.angle_actions:
-            angle, f, *args = angle_action
+        if ordered:
+            for angle_action in self.angle_actions:
+                angle, f, *args = angle_action
 
-            if abs(self.entity_addresses['rhonrad'].angle) > angle:
-                f(*args)
-                to_remove.append(angle_action)
+                if abs(self.entity_addresses['rhonrad'].angle) > angle:
+                    f(*args)
+                    to_remove.append(angle_action)
+                else:
+                    break
+        else:
+            for angle_action in self.angle_actions:
+                angle, f, *args = angle_action
+
+                if abs(self.entity_addresses['rhonrad'].angle) > angle:
+                    f(*args)
+                    to_remove.append(angle_action)
 
         for angle_action in to_remove:
             self.angle_actions.remove(angle_action)
