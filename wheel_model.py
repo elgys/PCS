@@ -31,13 +31,13 @@ WHEEL_UPPER_SPOKE_MASS = 5.5 # kg per spoke
 WHEEL_TOP_SPOKE_ANGLE = 180 * np.pi/180
 WHEEL_TOP_SPOKE_MASS = 2.0 # kg sole top spoke
 
-FLOOR_RADIUS = 0.4  # cm
+FLOOR_RADIUS = 0.4 # cm
 # FLOOR_WIDTH in cm, max rotations allowed is 2 full rotations each way (wheel gym competition rules)
 FLOOR_WIDTH = 2 * np.pi * WHEEL_RADIUS * 4.2
 
-COULOMB_FRICTION_CONSTANT = 0.7  # The friction coefficient for PVC on wood
+COULOMB_FRICTION_CONSTANT = 0.7 # The friction coefficient for PVC on wood
 
-DT = 0.01  # seconds, time difference between simulation steps
+DT = 0.01 # seconds, time difference between simulation steps
 
 #placement of the wheel in the space.
 WHEEL_MIDDLE = Vec2d(700, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
@@ -66,12 +66,11 @@ class Wheel_model:
 
         if visual:
             self.visual_init()
-            
 
     def visual_init(self):
-        """Initialize the screen and clock for visualization.
-        All visualization code taken from
-        https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py"""
+        """ Initialize the screen and clock for visualization.
+            All visualization code taken from
+            https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py."""
         pygame.init()
         self._screen = pygame.display.set_mode((1400, 400))
         self._clock = pygame.time.Clock()
@@ -164,12 +163,14 @@ class Wheel_model:
                 self.entity_addresses[name + '_' + str(2 - i)] = point
 
         self.entities += entities
+
     def set_human(self,human):
-        """here we make a body for the human so we can show it in a
-            visualization. this function will draw in the following sequence."""
+        """ Setup the gymnast in the wheel."""
         if self.human_body:
             self.space.remove(self.human_body)
+
         human.rightFootOnMiddel(self.entity_addresses["plank_1"].offset)
+
         places = human.test_bodypositions()
         human_body = []
         #shoulderline
@@ -190,11 +191,10 @@ class Wheel_model:
         #right leg
         human_body.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
         human_body.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+
         self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
         self.human_body = human_body
         self.space.add(human_body)
-
-
 
     def set_human_center_of_mass(self, center_of_mass, mass=-1):
         """ Set the center of mass for the human in the wheel, changing the mass
@@ -213,7 +213,7 @@ class Wheel_model:
             human.mass = mass
 
     def get_named_location(self, name):
-        """ Get the location of the entity relative to the middle of the wheel"""
+        """ Get the location of the entity relative to the middle of the wheel."""
         return self.entity_addresses[name].offset
 
     def add_force_on_wheel(self, force_vector_direction, force_strength, location, time=-1):
@@ -338,9 +338,9 @@ class Wheel_model:
             self.run_failure()
 
     def visual_step(self):
-        """Handle all extra actions needed to handle a visualization of the
-        wheel. All code for visualization was taken from
-        https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py"""
+        """ Handle all extra actions needed to handle a visualization of the
+            wheel. All code for visualization was taken from
+            https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py."""
         # clear screen and redraw all shapes in space
         self._screen.fill(THECOLORS["white"])
         self.space.debug_draw(self._draw_options)
@@ -359,8 +359,10 @@ class Wheel_model:
             elif event.type == KEYDOWN and event.key == K_p:
                 pygame.image.save(self._screen, "wheel_capture.png")
 
+
 if __name__ == "__main__":
     model = Wheel_model(visual=True)
     force = model.add_force_on_wheel((1, 0), 5800, (0, -30))
     model.add_angle_action(np.pi/2, model.remove_force_on_wheel, force)
+    
     print(model.run())

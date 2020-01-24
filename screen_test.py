@@ -13,11 +13,10 @@ import pymunk.pygame_util
 import wheel_model
 
 
-class BouncyBalls(object):
-    """
-    This class implements a simple scene in which there is a static platform (made up of a couple of lines)
-    that don't move. Balls appear occasionally and drop onto the platform. They bounce around.
-    """
+class Debug(object):
+    """ This class is a debug class for the simulation.
+        All code for visualization was taken from
+        https://github.com/viblo/pymunk/blob/master/examples/bouncing_balls.py."""
 
     def __init__(self):
         # Space
@@ -42,23 +41,15 @@ class BouncyBalls(object):
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
         self._draw_options.DRAW_SHAPE= True
         self._space.debug_draw(self._draw_options)
-        # Static barrier walls (lines) that the balls bounce off of
-        # self._add_static_scenery()
 
-        # Balls that exist in the world
-        # self._balls = []
-
-        # Execution control and time until the next ball spawns
+        # Execution control
         self._running = True
-        # self._ticks_to_next_ball = 10
 
     def run(self):
-        """
-        The main loop of the game.
-        :return: None
-        """
+        """ The main loop of the simulation."""
         # Main loop
 
+        # TODO Jeroen variable uitleggen en kan er wat weg?
         pushed = 0
         # print(self._m.add_force_on_wheel((1, 0), 5800, (0, -30)))
         # print(self._m.forces[0])
@@ -67,12 +58,14 @@ class BouncyBalls(object):
             # Progress time forward
             if pushed >= 0:
                 pushed += 1
+
             if pushed >= 20:
                 # print(self._m.entity_addresses['rhonrad'].center_of_gravity)
                 # print(self._m.entity_addresses['rhonrad'].angle % 6.282)
                 # self._m.entity_addresses['rhonrad'].apply_force_at_local_point(
                 #     (0, -5400), (105, 0))
                 pass
+
             if pushed >= 200:
                 # self._m.entity_addresses['rhonrad'].angle = 3.14159
                 # self._m.set_human_center_of_mass((40, -80), 55)
@@ -83,32 +76,28 @@ class BouncyBalls(object):
                 self._m.step()
 
             self._process_events()
-            # self._update_balls()
             self._clear_screen()
             self._draw_objects()
             pygame.display.flip()
+
             # Delay fixed time between frames
             self._clock.tick(50)
             pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
 
     def _add_static_scenery(self):
-        """
-        Create the static bodies.
-        :return: None
-        """
+        """ Create the static bodies."""
         static_body = self._space.static_body
         static_lines = [pymunk.Segment(static_body, (111.0, 280.0), (407.0, 246.0), 0.0),
                         pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)]
+
         for line in static_lines:
             line.elasticity = 0.95
             line.friction = 0.9
         self._space.add(static_lines)
 
     def _process_events(self):
-        """
-        Handle game and events like keyboard input. Call once per frame only.
-        :return: None
-        """
+        """ Handle game and events like keyboard input. Call once per frame
+            only."""
         for event in pygame.event.get():
             if event.type == QUIT:
                 self._running = False
@@ -117,6 +106,7 @@ class BouncyBalls(object):
             elif event.type == KEYDOWN and event.key == K_p:
                 pygame.image.save(self._screen, "bouncing_balls.png")
 
+    # TODO Jeroen, functie kan weg?
     def _update_balls(self):
         """
         Create/remove balls as necessary. Call once per frame only.
@@ -133,6 +123,7 @@ class BouncyBalls(object):
             self._space.remove(ball, ball.body)
             self._balls.remove(ball)
 
+    # TODO Jeroen, functie kan weg?
     def _create_ball(self):
         """
         Create a ball.
@@ -151,20 +142,14 @@ class BouncyBalls(object):
         self._balls.append(shape)
 
     def _clear_screen(self):
-        """
-        Clears the screen.
-        :return: None
-        """
+        """ Clears the screen."""
         self._screen.fill(THECOLORS["white"])
 
     def _draw_objects(self):
-        """
-        Draw the objects.
-        :return: None
-        """
+        """ Draw the objects."""
         self._space.debug_draw(self._draw_options)
 
 
 if __name__ == '__main__':
-    game = BouncyBalls()
+    game = Debug()
     game.run()

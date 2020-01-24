@@ -1,47 +1,24 @@
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-import matplotlib.cbook as cbook
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 
+# TODO nog wat met X en Y of die weglaten?
 def main(X, Y, Z, title=None):
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    #
-    # # X, Y, Z = [1, 2], [3, 4], np.array([[5, 6], [7, 8]])
-    # X = np.log10(X)
-    # Y = np.log10(Y)
-    # Z = Z * 180 / np.pi
-    # ax.plot_wireframe(X, Y, Z)
-    # ticks = [10 ** i for i in range(3, 7)]
-    # ax.set_xticks(np.log10(ticks))
-    # ax.set_xticklabels(ticks)
-    # ax.set_yticks(np.log10(ticks))
-    # ax.set_yticklabels(ticks)
-    # ax.set_xlabel("Power leg")
-    # ax.set_ylabel("Power hand")
-    # ax.set_zlabel("Degrees turned")
-    # plt.show()
-    # fig, ax = plt.subplots()
-    # pcm = ax.pcolor(X, Y, Z,norm=colors.LogNorm(vmin=Z.min(),vmax=Z.max()),cmap='PuBu_r')
-    # fig.colorbar(pcm, ax=ax, extend='max')
-    # plt.show()
+    """ Create a heatmap of the results."""
     Z = Z * 180 / np.pi
 
-    cMap = colors.ListedColormap(['red', 'orange', 'green'])
     fig, ax = plt.subplots()
     heatmap = ax.imshow(Z, cmap='gray', interpolation='none', extent=[
                         10, 500, 10, 500], origin='lower')
     cbar = fig.colorbar(heatmap, ax=ax, extend='max')
-    # plt.xscale('log')
-    # plt.yscale('log')
 
     cbar.set_label("Degrees turned")
     ax.set_xlabel("Power leg (N)")
     ax.set_ylabel("Power hand (N)")
+
     if title:
         ax.set_title(str(title) + " position")
+
     plt.show()
 
 

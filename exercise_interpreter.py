@@ -21,17 +21,17 @@ class Exercise_simulator:
         self.file = filename
         self.iterations = iterations
         self.parsed = False
-        # [[angle, f, *args]]
-        self.angle_actions = []
+        self.angle_actions = [] # [[angle, f, *args]]
         self.variables = {}
         self.simul_time = simul_time
         self.visual = visual
+
         if auto_parse:
             self.parse()
 
     def parse(self):
         """ Convert the contents of the file given in the init to a list of
-            of lists with the inner lists being [angle, f, *args]"""
+            of lists with the inner lists being [angle, f, *args]."""
         with open(self.file, 'r') as f:
             for line in f:
                 self.angle_actions.append(line.split())
@@ -59,8 +59,9 @@ class Exercise_simulator:
             if angle == 0:
                 name_to_function(function, w_model, h_model)(*args)
             else:
-                w_model.add_angle_action(
-                    angle * np.pi/180, name_to_function(function, w_model, h_model), *args)
+                w_model.add_angle_action(angle * np.pi/180,
+                                         name_to_function(function, w_model, h_model),
+                                         *args)
 
         w_model.add_angle_action(2*np.pi, w_model.run_success)
 
@@ -68,8 +69,10 @@ class Exercise_simulator:
         """ Run the simulation with the correct variables and actions."""
         w_model = wheel_model.Wheel_model(visual=(visual or self.visual))
         h_model = human_model.human(160, 55, list([0, 0]), 42)
+
         w_model.set_human(h_model)
         self.setup_angle_actions_model(w_model, h_model, variables=variables)
 
         res = w_model.run(max_run_time=self.simul_time)
+        
         return res

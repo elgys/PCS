@@ -4,6 +4,7 @@ import argparse
 
 
 def results(file, simul):
+    """ Create a .res file with all results of multiple simulations."""
     with open(file, 'w+') as f:
         for i in np.linspace(1000, 50000, 50):
             for j in np.linspace(1000, 50000, 50):
