@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         so more than once should not be necessary.\n\
                         (default=%(default)d)')
     parser.add_argument('-r', type=str, default='',
-                        help='The place where you want to store your results (default=<name exc file>.res')
+                        help='The place where you want to store your results (default=./results/<name exc file>.res')
     parser.add_argument('--simul_time', type=float, default=20.0,
                         help='The simulation time in seconds every run gets before resulting in failure (default=%(default)d)')
     parser.add_argument('-v', action='store_true',
