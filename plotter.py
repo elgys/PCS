@@ -2,14 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# TODO nog wat met X en Y of die weglaten?
 def main(X, Y, Z, title=None):
     """ Create a heatmap of the results."""
     Z = Z * 180 / np.pi
 
     fig, ax = plt.subplots()
     heatmap = ax.imshow(Z, cmap='gray', interpolation='none', extent=[
-                        10, 500, 10, 500], origin='lower')
+                        min(X), max(X), min(Y), max(Y)], origin='lower')
     cbar = fig.colorbar(heatmap, ax=ax, extend='max')
 
     cbar.set_label("Degrees turned")
@@ -41,6 +40,5 @@ if __name__ == "__main__":
             if y not in Y:
                 Y.append(y)
             Z[-1].append(z)
-    X, Y = np.meshgrid(X, Y)
-    main(np.array(X, dtype=float), np.array(
-        Y, dtype=float), np.array(Z, dtype=float), title=(filename.split('/')[-1][:-4]).replace('_', ' '))
+    main(np.array(X, dtype=float) / 100, np.array(
+        Y, dtype=float) / 100, np.array(Z, dtype=float), title=(filename.split('/')[-1][:-4]).replace('_', ' '))
