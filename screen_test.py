@@ -48,31 +48,9 @@ class Debug(object):
     def run(self):
         """ The main loop of the simulation."""
         # Main loop
-
-        # TODO Jeroen variable uitleggen en kan er wat weg?
-        pushed = 0
-        # print(self._m.add_force_on_wheel((1, 0), 5800, (0, -30)))
-        # print(self._m.forces[0])
-
         while self._running:
             # Progress time forward
-            if pushed >= 0:
-                pushed += 1
-
-            if pushed >= 20:
-                # print(self._m.entity_addresses['rhonrad'].center_of_gravity)
-                # print(self._m.entity_addresses['rhonrad'].angle % 6.282)
-                # self._m.entity_addresses['rhonrad'].apply_force_at_local_point(
-                #     (0, -5400), (105, 0))
-                pass
-
-            if pushed >= 200:
-                # self._m.entity_addresses['rhonrad'].angle = 3.14159
-                # self._m.set_human_center_of_mass((40, -80), 55)
-                pushed = -1
-
             for x in range(self._physics_steps_per_frame):
-                # self._space.step(self._dt)
                 self._m.step()
 
             self._process_events()
@@ -105,42 +83,7 @@ class Debug(object):
                 self._running = False
             elif event.type == KEYDOWN and event.key == K_p:
                 pygame.image.save(self._screen, "bouncing_balls.png")
-
-    # TODO Jeroen, functie kan weg?
-    def _update_balls(self):
-        """
-        Create/remove balls as necessary. Call once per frame only.
-        :return: None
-        """
-        self._ticks_to_next_ball -= 1
-        if self._ticks_to_next_ball <= 0:
-            self._create_ball()
-            self._ticks_to_next_ball = 100
-        # Remove balls that fall below 100 vertically
-        balls_to_remove = [
-            ball for ball in self._balls if ball.body.position.y < 100]
-        for ball in balls_to_remove:
-            self._space.remove(ball, ball.body)
-            self._balls.remove(ball)
-
-    # TODO Jeroen, functie kan weg?
-    def _create_ball(self):
-        """
-        Create a ball.
-        :return:
-        """
-        mass = 10
-        radius = 25
-        inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
-        body = pymunk.Body(mass, inertia)
-        x = random.randint(115, 350)
-        body.position = x, 400
-        shape = pymunk.Circle(body, radius, (0, 0))
-        shape.elasticity = 0.95
-        shape.friction = 0.9
-        self._space.add(body, shape)
-        self._balls.append(shape)
-
+    
     def _clear_screen(self):
         """ Clears the screen."""
         self._screen.fill(THECOLORS["white"])
