@@ -28,12 +28,11 @@ class simulator:
         self.angle_actions = []
         self.variables = {}
         self.simul_time = simul_time
-        self.w_model = wheel_model.Wheel_model(visual)
+        self.w_model = wheel_model.Wheel_model()
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
         self.w_model.set_human(self.h_model)
         if auto_parse:
             self.parse()
-            self.variables = self.variable_calc()
             self.setup_angle_actions_model(self.w_model,self.variables)
         self.visual = visual
 
@@ -52,12 +51,14 @@ class simulator:
             name in the exercise files with the given value."""
         self.variables[name] = value
 
-    def setup_angle_actions_model(self, auto_parse=True, variables={}):
+    def setup_angle_actions_model(self, auto_parse=True, variables={},
+                                  force=25000 ):
         """ Setup the actual angle actions in the wheel model"""
         if not self.parsed and auto_parse:
             self.parse()
 
         for angle, function,*args in self.angle_actions:
+            args = self.variable_calc(variables,args,force)
             for variable, val in {**self.variables, **variables}.items():
                 args = np.where(np.array(args) == variable,
                                 val, np.array(args))
@@ -73,7 +74,27 @@ class simulator:
 
         self.w_model.add_angle_action(2*np.pi, self.w_model.run_success)
 
-    def variable_calc()
+    def variable_calc(self,variables,args,force):
+        new = []
+        for arg in args:
+            if arg[0] is '"' and arg[-1] is '"':
+                new.append(arg[1:-1])
+            elif arg.isnumeric():
+                new.append(float(arg))
+            else:
+                if arg in variables or arg in self.variables:
+                    new.append()
+                else:
+                    new.append(force)
+        return new
+
+    def step(self):
+        time = self.w_model.step()
+        return time <= self.simul_time
+
+    def _get_results(self):
+        return self.w_model.get_max_angle()
+
     def run_simulation(self, variables={}, visual=False):
         """ Run the simulation with the correct variables and actions."""
         res = self.w_model.run(max_run_time=self.simul_time, visual=visual)

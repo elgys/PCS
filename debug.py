@@ -21,6 +21,7 @@ class Debug(object):
 
     def __init__(self,sim):
         # Space
+        self.sim = sim
         self._space = sim.w_model.space
         # self._space.gravity = (0.0, -900.0)
 
@@ -53,7 +54,7 @@ class Debug(object):
 
             for x in range(self._physics_steps_per_frame):
                 # self._space.step(self._dt)
-                self._m.step()
+                self.sim.step()
 
             self._process_events()
             # self._update_balls()
@@ -64,6 +65,13 @@ class Debug(object):
             self._clock.tick(1)
             pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
 
+
+    def step_draw(self):
+        self._process_events()
+        self._clear_screen()
+        self._draw_objects()
+        pygame.display.flip()
+        pygame.display.set_caption("wheel simulation")
 
     def _process_events(self):
         """

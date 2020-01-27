@@ -191,6 +191,9 @@ class Wheel_model:
         """ Get the location of the entity relative to the middle of the wheel"""
         return self.entity_addresses[name].offset
 
+    def get_max_angle(self):
+        return self.max_angle
+
     def add_force_on_wheel(self, force_vector_direction, force_strength, location, time=-1):
         """ Adds a force to the wheel in the given direction with the given
             strength at the relative (to the wheel's center) location given."""
@@ -265,9 +268,8 @@ class Wheel_model:
         for [force_vector, location, end_time] in self.forces:
                 self.entity_addresses['rhonrad'].apply_force_at_local_point(
                 force_vector, location)
-
-            if end_time != -1 and end_time >= self.current_time:
-                to_remove = [force_vector, location, end_time]
+                if end_time != -1 and end_time >= self.current_time:
+                    to_remove = [force_vector, location, end_time]
 
         for force in to_remove:
             self.remove_force_on_wheel(force)
@@ -300,5 +302,4 @@ class Wheel_model:
         if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
             self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
 
-        if self.current_time > max_run_time:
-            self.run_failure()
+        return self.current_time
