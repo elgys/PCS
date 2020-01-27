@@ -22,8 +22,7 @@ class Debug(object):
     def __init__(self,sim):
         # Space
         self.sim = sim
-        self._space = sim.w_model.space
-        # self._space.gravity = (0.0, -900.0)
+        # self.sim.w_model.space.gravity = (0.0, -900.0)
 
         # Physics
         # Time step
@@ -37,7 +36,7 @@ class Debug(object):
         self._clock = pygame.time.Clock()
         self._draw_options = pymunk.pygame_util.DrawOptions(self._screen)
         self._draw_options.DRAW_SHAPE= True
-        self._space.debug_draw(self._draw_options)
+        self.sim.w_model.space.debug_draw(self._draw_options)
 
         # Execution control and time until the next ball spawns
         self._running = True
@@ -53,7 +52,7 @@ class Debug(object):
             # Progress time forward
 
             for x in range(self._physics_steps_per_frame):
-                # self._space.step(self._dt)
+                # self.sim.w_model.space.step(self._dt)
                 self.sim.step()
 
             self._process_events()
@@ -98,4 +97,4 @@ class Debug(object):
         Draw the objects.
         :return: None
         """
-        self._space.debug_draw(self._draw_options)
+        self.sim.w_model.space.debug_draw(self._draw_options)

@@ -3,17 +3,18 @@ import numpy as np
 import argparse
 
 
-def results(file):
+def multirun(file,simul,functions,min_log=3,max_log=6):
     with open(file, 'w+') as f:
-        for i in np.logspace(3, 6, 50):
-            for j in np.logspace(3, 6, 50):
-                f.write(str(i) + ' ' + str(j) + ' ' + str(simul.run_simulation(
-                    variables={'power1': i, 'power2': j})) + '\n')
+        for i in np.logspace(min_log, max_log, 50):
+            for j in np.logspace(min_log, max_log, 50):
+                simul.reset(variables = {'power1':i,'power2': j})
+                f.write(str(i) + ' ' + str(j) + ' ' + str(run(simul,functions)) + '\n')
 
-def run(sim,functions):
-    while sim.step():
+def run(simul,functions):
+    while simul.step():
         for func in functions:
             func()
+    return simul.get_results();
 
 if __name__ == "__main__":
 
@@ -35,17 +36,18 @@ if __name__ == "__main__":
     parser.add_argument('-d','--debug_view',action='store_true',help ='Here we will call \
                         upon the of pygame is usefull for debug drawing')
 
+
     args = parser.parse_args()
     functionlist = []
-
-    simul = sim.simulator(args.file, args.t,
-                                     args.simul_time,
-                                     args.human_size,
-                                     args.human_weight)
+    simul = sim.simulator(args.file, args.t,args.simul_time,args.human_size,
+                            args.human_weight)
 
     if args.debug_view:
         import debug
         deb = debug.Debug(simul)
         functionlist.append(deb.step_draw)
 
-    run(simul,functionlist)
+    if args.r is not "":
+        multirun(args.r,simul,functionlist)
+    else:
+        run(simul,functionlist)

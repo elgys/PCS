@@ -19,14 +19,14 @@ def name_to_function(name, w_model, h_model):
 
 class simulator:
     def __init__(self, filename, iterations, simul_time=20.0,
-                 length = 160,weight = 55, auto_parse=True, visual=False):
+                 length = 160,weight = 55, auto_parse=True,variables = {}):
         self.file = filename
         self.iterations = iterations
         self.lenght = 160
         self.weight = 55
         self.parsed = False
         self.angle_actions = []
-        self.variables = {}
+        self.variables = variables
         self.simul_time = simul_time
         self.w_model = wheel_model.Wheel_model()
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
@@ -34,8 +34,6 @@ class simulator:
         if auto_parse:
             self.parse()
             self.setup_angle_actions_model(self.w_model,self.variables)
-        self.visual = visual
-
 
     def parse(self):
         """ Convert the contents of the file given in the init to a list of
@@ -82,8 +80,8 @@ class simulator:
             elif arg.isnumeric():
                 new.append(float(arg))
             else:
-                if arg in variables or arg in self.variables:
-                    new.append()
+                if arg in self.variables:
+                    new.append(self.variables[arg])
                 else:
                     new.append(force)
         return new
@@ -92,7 +90,19 @@ class simulator:
         time = self.w_model.step()
         return time <= self.simul_time
 
-    def _get_results(self):
+    def reset(self,variables={}):
+        print("hallo\n")
+        self.parsed = False
+        self.angle_actions = []
+        self.variables = variables
+        print(self.variables)
+        self.w_model = wheel_model.Wheel_model()
+        self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
+        self.w_model.set_human(self.h_model)
+        self.parse()
+        self.setup_angle_actions_model(self.w_model)
+
+    def get_results(self):
         return self.w_model.get_max_angle()
 
     def run_simulation(self, variables={}, visual=False):
