@@ -2,8 +2,9 @@ import numpy as np
 import physics as p
 
 class human:
+    """ This class makes all relevant calculations for the human body."""
     dic = {}
-    
+
     def  __init__(self, length, weight, bodyposition, shouldersize):
         # here the values are given in degrees.
         self.head = 0
@@ -194,7 +195,7 @@ class human:
             new center of mass.
             False: facing the screen
             True: facing the wheel"""
-        self.turned = value;
+        self.turned = value
         self.cog = self.__getCenterOfMass()
 
     def getcog(self):

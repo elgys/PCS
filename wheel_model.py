@@ -12,17 +12,17 @@ GRAVITY_CONSTANT = -982 # kg/s
 RHONRAD_PIECE_AMOUNT = 100 # segments of the outer ring
 PLANK_WIDTH = 9.0 # cm
 
-# WHEEL_PLANK_ANGLE = degrees * pi/180 = rad, angle from straight down, each way
-WHEEL_PLANK_ANGLE = 12.37 * np.pi/180
+# WHEEL_PLANK_ANGLE = degrees * pi / 180 = rad, angle from straight down, each way
+WHEEL_PLANK_ANGLE = 12.37 * np.pi / 180
 WHEEL_PLANK_MASS = 7.0 # kg per plank
-# WHEEL_SIDE+SPOKE_ANGLE = degrees * pi/180 = rad, angle from straight down, each way
-WHEEL_SIDE_SPOKE_ANGLE = 77.47 * np.pi/180
+# WHEEL_SIDE+SPOKE_ANGLE = degrees * pi / 180 = rad, angle from straight down, each way
+WHEEL_SIDE_SPOKE_ANGLE = 77.47 * np.pi / 180
 WHEEL_SIDE_SPOKE_MASS = 3.0 # kg per spoke
-# WHEEL_UPPER_SPOKE_ANGLE = degrees * pi/180 = rad, angle from straight down, each way
-WHEEL_UPPER_SPOKE_ANGLE = 130.01 * np.pi/180
+# WHEEL_UPPER_SPOKE_ANGLE = degrees * pi / 180 = rad, angle from straight down, each way
+WHEEL_UPPER_SPOKE_ANGLE = 130.01 * np.pi / 180
 WHEEL_UPPER_SPOKE_MASS = 5.5 # kg per spoke
-# WHEEL_TOP_SPOKE_ANGLE = degrees * pi/180 = rad, angle from straight down, each way
-WHEEL_TOP_SPOKE_ANGLE = 180 * np.pi/180
+# WHEEL_TOP_SPOKE_ANGLE = degrees * pi / 180 = rad, angle from straight down, each way
+WHEEL_TOP_SPOKE_ANGLE = 180 * np.pi / 180
 WHEEL_TOP_SPOKE_MASS = 2.0 # kg sole top spoke
 
 FLOOR_RADIUS = 0.4 # cm
@@ -33,12 +33,13 @@ COULOMB_FRICTION_CONSTANT = 0.7 # The friction coefficient for PVC on wood
 
 DT = 0.01 # seconds, time difference between simulation steps
 
-#placement of the wheel in the space.
+# placement of the wheel in the space.
 WHEEL_MIDDLE = Vec2d(700, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
 class Wheel_model:
-    def __init__(self,time):
+    """This class makes all relevant calculations for the wheel."""
+    def __init__(self, time):
         self.space = pymunk.Space()
         self.space.gravity = (0.0, GRAVITY_CONSTANT) # Generic gravity
         self.space.damping = 0.99 # Generic resistance
@@ -63,8 +64,8 @@ class Wheel_model:
         floor.position = (0.0, 0.0)
         floor.start_position = Vec2d(floor.position)
 
-        shape = pymunk.Segment(floor, (-FLOOR_WIDTH/2, 0),
-                               (FLOOR_WIDTH/2, 0), FLOOR_RADIUS)
+        shape = pymunk.Segment(floor, (-FLOOR_WIDTH / 2, 0),
+                               (FLOOR_WIDTH / 2, 0), FLOOR_RADIUS)
         shape.friction = COULOMB_FRICTION_CONSTANT
 
         self.entities += [floor, shape]
@@ -123,7 +124,8 @@ class Wheel_model:
         self.__setup_wheight_point_rhonrad(
             rhonrad, WHEEL_TOP_SPOKE_MASS, WHEEL_TOP_SPOKE_ANGLE, amount=1, name='top_grip')
 
-    def __setup_wheight_point_rhonrad(self, rhonrad, mass_per, angle, amount=2, name='', inner_offset=4):
+    def __setup_wheight_point_rhonrad(self, rhonrad, mass_per, angle, amount=2,
+                                      name='', inner_offset=4):
         """ Setup (a) weighted point(s) on the wheel, with the given mass per
             point, at angle from the bottom.
             Inner offset can be used to offset the points to the inside to show
@@ -142,7 +144,7 @@ class Wheel_model:
 
         self.entities += entities
 
-    def set_human(self,human):
+    def set_human(self, human):
         """ Setup the gymnast in the wheel."""
         if self.human_body:
             self.space.remove(self.human_body)
@@ -151,26 +153,28 @@ class Wheel_model:
 
         places = human.test_bodypositions()
         human_body = []
-        #shoulderline
-        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[4],1))
-        #left arm
-        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[2],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[2],places[3],1))
-        #right arm
-        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[5],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[5],places[6],1))
-        #hips
-        human_body.append(pymunk.Segment(self.rhonrad,places[1],places[7],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[4],places[10],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[10],1))
-        #left leg
-        human_body.append(pymunk.Segment(self.rhonrad,places[7],places[8],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[8],places[9],1))
-        #right leg
-        human_body.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
-        human_body.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+        # shoulderline
+        human_body.append(pymunk.Segment(self.rhonrad, places[1], places[4], 1))
+        # left arm
+        human_body.append(pymunk.Segment(self.rhonrad, places[1], places[2], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[2], places[3], 1))
+        # right arm
+        human_body.append(pymunk.Segment(self.rhonrad, places[4], places[5], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[5], places[6], 1))
+        # hips
+        human_body.append(pymunk.Segment(self.rhonrad, places[1], places[7], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[4], places[10], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[7], places[10], 1))
+        # left leg
+        human_body.append(pymunk.Segment(self.rhonrad, places[7], places[8], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[8], places[9], 1))
+        # right leg
+        human_body.append(pymunk.Segment(self.rhonrad, places[10], places[11], 1))
+        human_body.append(pymunk.Segment(self.rhonrad, places[11], places[12], 1))
+        # head
+        # TODO teken hoofd
 
-        self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
+        self.set_human_center_of_mass(human.getcog(), mass=human.getweigth())
         self.human_body = human_body
         self.space.add(human_body)
 
@@ -195,6 +199,7 @@ class Wheel_model:
         return self.entity_addresses[name].offset
 
     def get_max_angle(self):
+        """ Get the maximum angle the wheel turned."""
         return self.max_angle
 
     def add_force_on_wheel(self, force_vector_direction, force_strength, location, time=-1):
@@ -225,7 +230,6 @@ class Wheel_model:
             force argument is expected to be the force vector from the
             add_force_on_wheel function."""
         force_vector, location, end_time = force
-
         self.forces.remove(force)
 
     def remove_all_forces(self):

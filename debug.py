@@ -14,15 +14,11 @@ import wheel_model
 
 
 class Debug(object):
-    """
-    This class implements a simple scene in which there is a static platform (made up of a couple of lines)
-    that don't move. Balls appear occasionally and drop onto the platform. They bounce around.
-    """
+    """ This class is a debug class for the simulation."""
 
-    def __init__(self,sim):
+    def __init__(self, sim):
         # Space
         self.sim = sim
-        # self.sim.w_model.space.gravity = (0.0, -900.0)
 
         # Physics
         # Time step
@@ -40,6 +36,8 @@ class Debug(object):
 
 
     def step_draw(self):
+        """ Draws the current step in the simulation.
+            It gets a simulation from init."""
         self._process_events()
         self._clear_screen()
         self._draw_objects()
@@ -47,28 +45,20 @@ class Debug(object):
         pygame.display.set_caption("wheel simulation")
 
     def _process_events(self):
-        """
-        Handle game and events like keyboard input. Call once per frame only.
-        :return: None
-        """
+        """ Handle game and events like keyboard input. Call once per frame
+            only."""
         for event in pygame.event.get():
             if event.type == QUIT:
                 self._running = False
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 self._running = False
             elif event.type == KEYDOWN and event.key == K_p:
-                pygame.image.save(self._screen, "bouncing_balls.png")
+                pygame.image.save(self._screen, "wheel_capture.png")
 
     def _clear_screen(self):
-        """
-        Clears the screen.
-        :return: None
-        """
+        """ Clears the screen."""
         self._screen.fill(THECOLORS["white"])
 
     def _draw_objects(self):
-        """
-        Draw the objects.
-        :return: None
-        """
+        """ Draw the objects."""
         self.sim.w_model.space.debug_draw(self._draw_options)

@@ -3,22 +3,27 @@ import numpy as np
 import argparse
 
 
-def multirun(file,simul,functions,minn=1000,maxi=50000):
+def multirun(file, simul, functions, minn=1000, maxi=50000):
+    """ Runs a simulation multiple times."""
     with open(file, 'w+') as f:
         for i in np.linspace(minn, maxi, 50):
             for j in np.linspace(minn, maxi, 50):
                 print(str(i) + str(j))
+
                 simul.reset(variables = {'power1':i,'power2': j})
                 f.write(str(i) + ' ' + str(j) + ' ' + str(run(simul,functions)) + '\n')
 
-def run(simul,functions):
+
+def run(simul, functions):
+    """ Run a simulation one time."""
     while simul.step():
         for func in functions:
             func()
+
     return simul.get_results();
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Process an exercise according to a given .exc file.\n\
                      Standard the exercise is run with forces from the arm and leg\n\
@@ -44,16 +49,17 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     functionlist = []
-    simul = sim.simulator(args.file, args.t,args.simul_time,args.human_size,
+    simul = sim.simulator(args.file, args.t, args.simul_time, args.human_size,
                             args.human_weight)
 
     if args.debug_view:
         import debug
+
         deb = debug.Debug(simul)
         functionlist.append(deb.step_draw)
 
     if args.r is not "":
         args.r = 'results/' + args.file.split('/')[-1][:-4] + '.res'
-        multirun(args.r,simul,functionlist)
+        multirun(args.r, simul, functionlist)
     else:
-        run(simul,functionlist)
+        run(simul, functionlist)

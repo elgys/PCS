@@ -12,9 +12,8 @@ This project simulates the forces on a gym wheel by a gymnast.
         First argument is the power in newton of the hand.
         Second argument is the power in newton of the leg.
 
-exercise_interpreter.py:
-     This file can read the .exc files and runs the whole simulation.
-     It imports the wheel model and the human body model.
+debug.py
+    This is a debug file for the simulation.
 
 human_model.py:
     This file contains all code associated with the modelling of a human body.
@@ -28,7 +27,7 @@ humaninit.txt:
 
 main.py:
     This file parses the argument the user gives for the simulator.
-    It calls the simulation.
+    It calls simulator.py.
 
 physics.py:
      A collection of all physics calculations of the human model.
@@ -36,8 +35,9 @@ physics.py:
 plotter.py
     This file reads a .res file and plots its data.
 
-screen_test.py
-    This is a debug file for the simulation.
+simulator.py:
+     This file can read the .exc files and runs the whole simulation.
+     It imports wheel_model.py and human_model.py.
 
 wheel_model.py:
     This file contains all code associated with the modelling of a gym wheel.

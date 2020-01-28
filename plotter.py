@@ -23,22 +23,28 @@ def main(X, Y, Z, title=None):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(
-        description='Plot a res file in a heatmap.')
+
+    parser = argparse.ArgumentParser(description='Plot a res file in a heatmap.')
     parser.add_argument('file', type=str, default='./results/default_results.res',
                         help='The name of the file to be plotted (default=%(default)s)')
 
     args = parser.parse_args()
     filename = args.file
     X, Y, Z = [], [], []
+
     with open(filename) as f:
         for line in f:
             x, y, z = line.split()
+
             if x not in X:
                 X.append(x)
                 Z.append([])
+
             if y not in Y:
                 Y.append(y)
+                
             Z[-1].append(z)
+
     main(np.array(X, dtype=float) / 100, np.array(
-        Y, dtype=float) / 100, np.array(Z, dtype=float), title=(filename.split('/')[-1][:-4]).replace('_', ' '))
+         Y, dtype=float) / 100, np.array(Z, dtype=float),
+         title=(filename.split('/')[-1][:-4]).replace('_', ' '))
