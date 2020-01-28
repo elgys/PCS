@@ -1,1 +1,1 @@
-This file intentionally left empy to make sure results folder exists
+This file intentionally left empty to make sure results folder exists
