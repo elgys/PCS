@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # The result files
-results/
+results/*
 *.res
