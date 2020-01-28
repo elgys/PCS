@@ -25,25 +25,27 @@ WHEEL_UPPER_SPOKE_MASS = 5.5 # kg per spoke
 WHEEL_TOP_SPOKE_ANGLE = 180 * np.pi/180
 WHEEL_TOP_SPOKE_MASS = 2.0 # kg sole top spoke
 
-FLOOR_RADIUS = 0.4  # cm
+FLOOR_RADIUS = 0.4 # cm
 # FLOOR_WIDTH in cm, max rotations allowed is 2 full rotations each way (wheel gym competition rules)
 FLOOR_WIDTH = 2 * np.pi * WHEEL_RADIUS * 4.2
 
-COULOMB_FRICTION_CONSTANT = 0.7  # The friction coefficient for PVC on wood
+COULOMB_FRICTION_CONSTANT = 0.7 # The friction coefficient for PVC on wood
 
-DT = 0.01  # seconds, time difference between simulation steps
+DT = 0.01 # seconds, time difference between simulation steps
 
-WHEEL_MIDDLE = Vec2d(500, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
+#placement of the wheel in the space.
+WHEEL_MIDDLE = Vec2d(700, WHEEL_RADIUS + FLOOR_RADIUS + WHEEL_WIDTH)
 
 
 class Wheel_model:
-    def __init__(self):
+    def __init__(self,time):
         self.space = pymunk.Space()
         self.space.gravity = (0.0, GRAVITY_CONSTANT) # Generic gravity
         self.space.damping = 0.99 # Generic resistance
         self.entities = []
         self.entity_addresses = {}
         self.human_body = []
+        self.max_run_time = time
 
         self.__setup_rhonrad()
         self.__setup_floor()
@@ -139,12 +141,14 @@ class Wheel_model:
                 self.entity_addresses[name + '_' + str(2 - i)] = point
 
         self.entities += entities
+
     def set_human(self,human):
-        """here we make a body for the human so we can show it in a
-            visualization. this function will draw in the following sequence."""
+        """ Setup the gymnast in the wheel."""
         if self.human_body:
             self.space.remove(self.human_body)
+
         human.rightFootOnMiddel(self.entity_addresses["plank_1"].offset)
+
         places = human.test_bodypositions()
         human_body = []
         #shoulderline
@@ -165,11 +169,10 @@ class Wheel_model:
         #right leg
         human_body.append(pymunk.Segment(self.rhonrad,places[10],places[11],1))
         human_body.append(pymunk.Segment(self.rhonrad,places[11],places[12],1))
+
         self.set_human_center_of_mass(human.getcog(),mass = human.getweigth())
         self.human_body = human_body
         self.space.add(human_body)
-
-
 
     def set_human_center_of_mass(self, center_of_mass, mass=-1):
         """ Set the center of mass for the human in the wheel, changing the mass
@@ -188,7 +191,7 @@ class Wheel_model:
             human.mass = mass
 
     def get_named_location(self, name):
-        """ Get the location of the entity relative to the middle of the wheel"""
+        """ Get the location of the entity relative to the middle of the wheel."""
         return self.entity_addresses[name].offset
 
     def get_max_angle(self):
@@ -246,17 +249,27 @@ class Wheel_model:
         self.success = True
         self.run_simulation = False
 
-    def __apply_angle_actions(self):
+    def __apply_angle_actions(self, ordered=True):
         """ Apply function f with arguments args when the wheel has turned angle
             radians."""
         to_remove = []
 
-        for angle_action in self.angle_actions:
-            angle, f, *args = angle_action
+        if ordered:
+            for angle_action in self.angle_actions:
+                angle, f, *args = angle_action
 
-            if abs(self.entity_addresses['rhonrad'].angle) > angle:
-                f(*args)
-                to_remove.append(angle_action)
+                if abs(self.entity_addresses['rhonrad'].angle) > angle:
+                    f(*args)
+                    to_remove.append(angle_action)
+                else:
+                    break
+        else:
+            for angle_action in self.angle_actions:
+                angle, f, *args = angle_action
+
+                if abs(self.entity_addresses['rhonrad'].angle) > angle:
+                    f(*args)
+                    to_remove.append(angle_action)
 
         for angle_action in to_remove:
             self.angle_actions.remove(angle_action)
@@ -274,21 +287,6 @@ class Wheel_model:
         for force in to_remove:
             self.remove_force_on_wheel(force)
 
-    def run(self, max_run_time=60.0, visual=False):
-        """ Run the simulation (without visuals);
-            max_run_time is in the simulation, ergo the default is simulate 60
-            seconds in simulation."""
-        while self.run_simulation:
-            self.step()
-            self.current_time += DT
-
-            if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
-                self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
-
-            if self.current_time > max_run_time:
-                self.run_failure()
-
-        return self.max_angle
 
     def step(self):
         """ Take a step in the simulation; also apply all angle actions
@@ -302,4 +300,7 @@ class Wheel_model:
         if self.max_angle < abs(self.entity_addresses['rhonrad'].angle):
             self.max_angle = abs(self.entity_addresses['rhonrad'].angle)
 
-        return self.current_time
+        if self.current_time > self.max_run_time:
+            self.run_failure()
+
+        return self.run_simulation

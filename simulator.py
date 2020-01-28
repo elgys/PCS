@@ -6,8 +6,7 @@ import numpy as np
 def name_to_function(name, w_model, h_model):
     """ Interpret the key words in the excercise files into functions."""
     if name == 'setturned':
-        return lambda boolean: (h_model.setturned(bool(boolean)),
-                                w_model.set_human(h_model))
+        return lambda boolean: (h_model.setturned(boolean == 'True'))
     elif name == 'positionchange':
         return lambda *args: (h_model.positionchange(*np.array(args).astype(float)),
                               w_model.set_human(h_model))
@@ -28,7 +27,7 @@ class simulator:
         self.angle_actions = []
         self.variables = variables
         self.simul_time = simul_time
-        self.w_model = wheel_model.Wheel_model()
+        self.w_model = wheel_model.Wheel_model(self.simul_time)
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
         self.w_model.set_human(self.h_model)
         if auto_parse:
@@ -37,7 +36,7 @@ class simulator:
 
     def parse(self):
         """ Convert the contents of the file given in the init to a list of
-            of lists with the inner lists being [angle, f, *args]"""
+            of lists with the inner lists being [angle, f, *args]."""
         with open(self.file, 'r') as f:
             for line in f:
                 self.angle_actions.append(line.split())
@@ -67,8 +66,9 @@ class simulator:
             if angle == 0:
                 name_to_function(function, self.w_model, self.h_model)(*args)
             else:
-                self.w_model.add_angle_action(
-                    angle * np.pi/180, name_to_function(function, self.w_model,self.h_model), *args)
+                self.w_model.add_angle_action(angle * np.pi/180,
+                                         name_to_function(function, self.w_model, self.h_model),
+                                         *args)
 
         self.w_model.add_angle_action(2*np.pi, self.w_model.run_success)
 
@@ -79,24 +79,23 @@ class simulator:
                 new.append(arg[1:-1])
             elif arg.isnumeric():
                 new.append(float(arg))
+            elif arg not in self.variables and arg[1:] not in self.variables:
+                new.append(arg)
+                if arg[0] == '-':
+                    arg = arg[1:]
+                self.variables[arg] = force
             else:
-                if arg in self.variables:
-                    new.append(self.variables[arg])
-                else:
-                    new.append(force)
+                new.append(arg)
         return new
 
     def step(self):
-        time = self.w_model.step()
-        return time <= self.simul_time
+        return self.w_model.step()
 
     def reset(self,variables={}):
-        print("hallo\n")
         self.parsed = False
         self.angle_actions = []
         self.variables = variables
-        print(self.variables)
-        self.w_model = wheel_model.Wheel_model()
+        self.w_model = wheel_model.Wheel_model(self.simul_time)
         self.h_model = human_model.human(self.lenght,self.weight, list([0, 0]), 42)
         self.w_model.set_human(self.h_model)
         self.parse()

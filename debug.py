@@ -38,32 +38,6 @@ class Debug(object):
         self._draw_options.DRAW_SHAPE= True
         self.sim.w_model.space.debug_draw(self._draw_options)
 
-        # Execution control and time until the next ball spawns
-        self._running = True
-
-    def run(self):
-        """
-        The main loop of the game.
-        :return: None
-        """
-        # Main loop
-
-        while self._running:
-            # Progress time forward
-
-            for x in range(self._physics_steps_per_frame):
-                # self.sim.w_model.space.step(self._dt)
-                self.sim.step()
-
-            self._process_events()
-            # self._update_balls()
-            self._clear_screen()
-            self._draw_objects()
-            pygame.display.flip()
-            # Delay fixed time between frames
-            self._clock.tick(1)
-            pygame.display.set_caption("fps: " + str(self._clock.get_fps()))
-
 
     def step_draw(self):
         self._process_events()

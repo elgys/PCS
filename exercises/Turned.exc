@@ -1,7 +1,8 @@
 0 setturned "True"
 0 positionchange 0 343 30 30 210 210 15 15 347 347
 0 power "upper_grip_2" -power1
-0 power "plank_1" power2
+0 power "plank_1" -power2
+0 power "plank_2" -power2
 180 remove_all_forces
 180 power "upper_grip_2" power1
 180 power "plank_2" power2

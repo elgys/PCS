@@ -2,8 +2,8 @@ import numpy as np
 import physics as p
 
 class human:
-
     dic = {}
+    
     def  __init__(self, length, weight, bodyposition, shouldersize):
         # here the values are given in degrees.
         self.head = 0
@@ -16,16 +16,11 @@ class human:
         self.leftLowerArm = 0
         self.leftUpperLeg = 0
         self.leftLowerLeg = 0
-        # length in cm
-        self.length = length
-        # weigth in kilo
-        self.weight = weight
-        # the bodyposition is the position of the middle of the body
-        self.bodyposition = np.array(bodyposition)
-        # the midsize of a shoulder
-        self.shoulderSize = shouldersize
-        # gymnast not turned
-        self.turned = False
+        self.length = length # in cm
+        self.weight = weight # in kg
+        self.bodyposition = np.array(bodyposition) # the position of the middle of the body
+        self.shoulderSize = shouldersize # the midsize of a shoulder
+        self.turned = False # gymnast not turned
 
         if "done" not in self.dic.keys():
             self.dic["done"] = 1
@@ -40,7 +35,7 @@ class human:
     def __rotationBodyParts(self, begin, end, rot):
         """ Rotate a bodypart whithout knowing which bodypart it is, by
             using a vector describing the bodypart.
-            It returns (vector, end coordinate)"""
+            Returns (vector, end coordinate)"""
         vec = end - begin
         vec = np.dot(p.rotation2d(rot), vec)
         end = begin + vec
@@ -95,10 +90,9 @@ class human:
         return(cog, mass, tophead)
 
     def __getCenterOfMass(self):
-        """ Calculate the center of mass of the total body.
-            Returns ([individual center of masses], [individual weights]).
-            we also caclulate the location of the other parts and put them in
-            ourself."""
+        """ Calculate the center of mass of the total body and location
+            of all other parts.
+            Returns ([individual center of masses], [individual weights])."""
         CenterofMass=[]
         masses = []
         # Calculate the placement of the legs and their combined center of mass.
@@ -195,7 +189,6 @@ class human:
         self.leftLowerLeg = leftlowerleg * degree_to_rad
         self.cog = self.__getCenterOfMass()
 
-
     def setturned(self, value):
         """ Change the viewing direction of the gymnast and calculate its
             new center of mass.
@@ -209,7 +202,7 @@ class human:
         return self.cog
 
     def getweigth(self):
-        """ get the mass of the human."""
+        """ Get the mass of the human."""
         return self.weight
 
     def rightFootOnMiddel(self, rightpos):
