@@ -17,10 +17,10 @@ def name_to_function(name, w_model, h_model):
 
 
 class simulator:
-    def __init__(self, filename, iterations, simul_time=20.0,
-                 length = 160,weight = 55, auto_parse=True,variables = {}):
+    """ This class combines two models into a simulation."""
+    def __init__(self, filename, simul_time=20.0,
+                 length = 160, weight = 55, auto_parse=True, variables = {}):
         self.file = filename
-        self.iterations = iterations
         self.lenght = 160
         self.weight = 55
         self.parsed = False

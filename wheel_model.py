@@ -172,9 +172,12 @@ class Wheel_model:
         human_body.append(pymunk.Segment(self.rhonrad, places[10], places[11], 1))
         human_body.append(pymunk.Segment(self.rhonrad, places[11], places[12], 1))
         # head
-        neckline = np.array(places[0] - places[4]) * 0.5
+        neckline = (places[1] - places[4]) * 0.5
         neckpoint = places[4] + neckline
-        print(neckpoint)
+        headmiddle = ((places[0] - neckpoint) * 0.5) + neckpoint
+        distance = neckpoint - headmiddle
+        distance = np.sqrt(distance[0] ** 2 + distance[1] ** 2)
+        human_body.append(pymunk.Circle(self.rhonrad,distance,headmiddle))
         self.set_human_center_of_mass(human.getcog(), mass=human.getweigth())
         self.human_body = human_body
         self.space.add(human_body)

@@ -24,8 +24,9 @@ def main(X, Y, Z, title=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Plot a res file in a heatmap.')
-    parser.add_argument('file', type=str, default='./results/default_results.res',
+    parser = argparse.ArgumentParser(
+        description='Plot a res file in a heatmap.')
+    parser.add_argument('file', type=str, default='./results/T_pose.res',
                         help='The name of the file to be plotted (default=%(default)s)')
 
     args = parser.parse_args()
@@ -42,7 +43,7 @@ if __name__ == "__main__":
 
             if y not in Y:
                 Y.append(y)
-                
+
             Z[-1].append(z)
 
     main(np.array(X, dtype=float) / 100, np.array(

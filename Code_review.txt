@@ -1,5 +1,6 @@
 For running this project you need at least python version 3.6 and the libraries
 numpy, matplotlib, pymunk and pygame need to be installed.
+For installing them you can use pip install.
 
 You can get the graph files by first running main.py with the flag --file and
 the correct .exc file. (See main.py -h for all available flags.)
